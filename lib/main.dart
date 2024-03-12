@@ -11,9 +11,8 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Binario M',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData.dark(useMaterial3: true),
+      themeMode: ThemeMode.system,
       home: const HomePage(),
     );
   }

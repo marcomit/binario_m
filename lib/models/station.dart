@@ -3,6 +3,7 @@ class Station {
   final String nomeBreve;
   final String? label;
   final String id;
+  String get idStation => id.substring(2);
   Station({
     required this.nomeLungo,
     required this.nomeBreve,
