@@ -36,9 +36,9 @@ class ViaggiaTreno {
         solutions.add(Solution.fronJson(solution));
       }
     } catch (e) {
-      print(e);
-    } finally {
-      return solutions;
+      debugPrint(e.toString());
     }
+    debugPrint(solutions.toString());
+    return solutions;
   }
 }

@@ -11,34 +11,49 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   List<Station> stations = [];
-
+  bool isLoading = false;
+  bool isError = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stazioni'),
-      ),
-      body: ListView(
-        children: [
-          TextField(
-            onChanged: (value) async {
-              final response = await ViaggiaTreno.searchStations(value);
-              setState(() {
-                stations = response;
-              });
-            },
-          ),
-          for (final station in stations) stationCard(station: station)
-        ],
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('Stazioni'),
+        ),
+        body: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    hintText: 'Cerca stazione...'),
+                onChanged: (value) async {
+                  if (value.length < 2) return;
+                  setState(() => isLoading = true);
+                  final response = await ViaggiaTreno.searchStations(value);
+                  setState(() {
+                    stations = response;
+                    isLoading = false;
+                  });
+                },
+              ),
+            ),
+            if (isLoading) const Text('Loading ...'),
+            for (final station in stations) stationCard(station: station)
+          ],
+        ));
   }
 
   Widget stationCard({required Station station}) {
     return GestureDetector(
       onTap: () => Navigator.pop<Station>(context, station),
-      child: ListTile(
-        title: Text(station.nomeBreve),
+      child: Card(
+        child: ListTile(
+          title: Text(station.nomeLungo),
+          subtitle: Text(station.nomeBreve),
+          trailing: Text(station.id),
+        ),
       ),
     );
   }
