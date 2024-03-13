@@ -1,11 +1,15 @@
+import 'dart:math' as math;
+
+import 'package:binario_m/models/news.dart';
 import 'package:binario_m/models/station.dart';
 import 'package:binario_m/pages/search.dart';
 import 'package:binario_m/pages/solutions.dart';
-import 'package:binario_m/utils/global.dart';
-import 'package:binario_m/utils/viaggia_treno.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+import 'package:marquee/marquee.dart';
+
+import '../utils/global.dart';
+import '../utils/viaggia_treno.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -47,6 +51,22 @@ class _HomePageState extends State<HomePage> {
         body: Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            SizedBox(
+                height: 50,
+                child: FutureBuilder(
+                    future: ViaggiaTreno.getNews(),
+                    builder: (_, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isNotEmpty) {
+                          String news = "";
+                          for (final text in (snapshot.data as List<News>)) {
+                            news += "${text.text} - ";
+                          }
+                          return Marquee(text: news);
+                        }
+                      }
+                      return const Text('News');
+                    })),
             GestureDetector(
               onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const SearchPage()))

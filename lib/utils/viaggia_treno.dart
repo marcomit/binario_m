@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:binario_m/models/news.dart';
 import 'package:binario_m/models/solution.dart';
 import 'package:binario_m/models/station.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,9 +37,17 @@ class ViaggiaTreno {
         solutions.add(Solution.fronJson(solution));
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Errore ${e.toString()}');
     }
-    debugPrint(solutions.toString());
+    debugPrint(solutions.length.toString());
     return solutions;
+  }
+
+  static Future<List<News>> getNews() async {
+    final Response response = await get(Uri.parse('$baseUrl/news/0/it'));
+    final news = (jsonDecode(response.body) as List<dynamic>)
+        .map((e) => News.fromJson(e))
+        .toList();
+    return news;
   }
 }

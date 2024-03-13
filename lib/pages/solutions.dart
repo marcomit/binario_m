@@ -61,7 +61,7 @@ class _SolutionsPageState extends State<SolutionsPage> {
                     Text(vehicle.origine)
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Text(
@@ -71,7 +71,8 @@ class _SolutionsPageState extends State<SolutionsPage> {
                     ),
                     Text(vehicle.destinazione)
                   ],
-                )
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           const SizedBox(height: 20),
