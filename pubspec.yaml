@@ -38,6 +38,9 @@ dependencies:
   http: ^1.2.0
   intl: ^0.19.0
   marquee: ^2.2.3
+  timezone: ^0.9.2
+  numberpicker: ^2.1.2
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:

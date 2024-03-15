@@ -34,10 +34,7 @@ class _SolutionsPageState extends State<SolutionsPage> {
         itemCount: widget.solutions.length,
         itemBuilder: (context, index) {
           final solution = widget.solutions[index];
-          return Card(
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: solutionCard(solution)));
+          return solutionCard(solution);
         },
       ),
     );
@@ -45,40 +42,44 @@ class _SolutionsPageState extends State<SolutionsPage> {
 
   Widget solutionCard(Solution solution) {
     return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final vehicle in solution.vehicles)
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                        '${formatNumber(vehicle.orarioPartenza.hour)}:${formatNumber(vehicle.orarioPartenza.minute)}'),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(vehicle.origine)
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                        '${formatNumber(vehicle.orarioArrivo.hour)}:${formatNumber(vehicle.orarioArrivo.minute)}'),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(vehicle.destinazione)
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          const SizedBox(height: 20),
-          Text(
-              '${formatNumber(solution.duration.inHours)}:${formatNumber(solution.duration.inMinutes)}')
-        ],
+      margin: const EdgeInsets.all(10),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final vehicle in solution.vehicles)
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                          '${formatNumber(vehicle.orarioPartenza.hour)}:${formatNumber(vehicle.orarioPartenza.minute)}'),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(vehicle.origine)
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(
+                          '${formatNumber(vehicle.orarioArrivo.hour)}:${formatNumber(vehicle.orarioArrivo.minute)}'),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(vehicle.destinazione)
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            const SizedBox(height: 20),
+            Text(
+                '${formatNumber(solution.duration.inHours)}:${formatNumber(solution.duration.inMinutes)}')
+          ],
+        ),
       ),
     );
   }

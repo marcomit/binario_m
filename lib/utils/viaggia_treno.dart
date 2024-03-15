@@ -48,6 +48,20 @@ class ViaggiaTreno {
     final news = (jsonDecode(response.body) as List<dynamic>)
         .map((e) => News.fromJson(e))
         .toList();
+    debugPrint(news.toString());
     return news;
+  }
+
+  static Future<List<dynamic>> getDepartures(Station station) async {
+    final now = DateTime.now();
+    final timezoneName = now.timeZoneName;
+    final offset = now.timeZoneOffset.inHours.abs().toString().padLeft(2, '0');
+    final formattedTimezoneString =
+        "GMT${offset.replaceAll('-', '+')} ($timezoneName)";
+
+    print(formattedTimezoneString);
+    final Response response =
+        await get(Uri.parse('$baseUrl/partenze/${station.id}/'));
+    return jsonDecode(response.body) as List<dynamic>;
   }
 }

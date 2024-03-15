@@ -4,9 +4,12 @@ import 'package:binario_m/models/news.dart';
 import 'package:binario_m/models/station.dart';
 import 'package:binario_m/pages/search.dart';
 import 'package:binario_m/pages/solutions.dart';
+import 'package:binario_m/providers/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:numberpicker/numberpicker.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/global.dart';
 import '../utils/viaggia_treno.dart';
@@ -22,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   Station? departure;
   Station? destination;
   DateTime selectedDate = DateTime.now();
+  int hour = 0;
+  int minute = 0;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime initialDate = DateTime.now();
@@ -32,28 +37,32 @@ class _HomePageState extends State<HomePage> {
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null && picked != initialDate) {
-      // ignore: use_build_context_synchronously
-      final pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-      if (pickedTime != null) {
-        setState(() => selectedDate = picked
-            .add(Duration(hours: pickedTime.hour, minutes: pickedTime.minute)));
-      }
+      setState(() => selectedDate = picked);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.watch<ThemeProvider>();
     return Scaffold(
-        appBar: AppBar(title: const Text("Treni")),
+        appBar: AppBar(
+          title: const Text("Treni"),
+          actions: [
+            IconButton(
+                onPressed: theme.toggle,
+                icon: Icon(theme.themeMode.name == 'system'
+                    ? CupertinoIcons.desktopcomputer
+                    : theme.themeMode.name == 'dark'
+                        ? CupertinoIcons.sun_min
+                        : CupertinoIcons.moon))
+          ],
+        ),
         body: Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
             SizedBox(
                 height: 50,
-                child: FutureBuilder(
+                child: FutureBuilder<List<News>>(
                     future: ViaggiaTreno.getNews(),
                     builder: (_, snapshot) {
                       if (snapshot.hasData) {
@@ -103,33 +112,67 @@ class _HomePageState extends State<HomePage> {
                     : destination!.nomeBreve),
               ),
             ),
-            GestureDetector(
-              onTap: () async => await _selectDate(context),
-              child: ListTile(
-                leading: const Icon(CupertinoIcons.calendar),
-                title: Text(
-                    '${formatNumber(selectedDate.day)} ${months[selectedDate.month]}'),
-                trailing: Text(
-                    '${formatNumber(selectedDate.hour)}:${formatNumber(selectedDate.minute)}'),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () async => await _selectDate(context),
+                  child: Row(
+                    children: [
+                      const Icon(CupertinoIcons.calendar),
+                      const SizedBox(width: 10),
+                      Text(
+                          '${formatNumber(selectedDate.day)} ${months[selectedDate.month]}'),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                NumberPicker(
+                    minValue: 0,
+                    maxValue: 23,
+                    value: hour,
+                    onChanged: (_) {
+                      setState(() => hour = _);
+                    }),
+                NumberPicker(
+                    minValue: 0,
+                    maxValue: 59,
+                    value: minute,
+                    onChanged: (_) => setState(() => minute = _)),
+              ],
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: FloatingActionButton.extended(
+                onPressed: () async {
+                  if (departure != null && destination != null) {
+                    selectedDate.add(Duration(hours: hour, minutes: minute));
+                    ViaggiaTreno.getSolutions(
+                            departure!, destination!, selectedDate)
+                        .then((value) => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => SolutionsPage(
+                                    solutions: value,
+                                    date: selectedDate,
+                                    departure: departure!,
+                                    destination: destination!))));
+                  } else {
+                    SnackBar(
+                      content: const Text('Yay! A SnackBar!'),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),
+                    );
+                  }
+                },
+                icon: const Icon(CupertinoIcons.search),
+                label: const Text('Cerca'),
               ),
             ),
-            FloatingActionButton(
-              onPressed: () async {
-                if (departure != null && destination != null) {
-                  ViaggiaTreno.getSolutions(
-                          departure!, destination!, selectedDate)
-                      .then((value) => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => SolutionsPage(
-                                  solutions: value,
-                                  date: selectedDate,
-                                  departure: departure!,
-                                  destination: destination!))));
-                }
-              },
-              child: const Icon(CupertinoIcons.search),
-            )
           ]),
         ));
   }

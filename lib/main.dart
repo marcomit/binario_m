@@ -1,8 +1,13 @@
 import 'package:binario_m/pages/home.dart';
+import 'package:binario_m/providers/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const Main());
+  runApp(MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
+    child: const Main(),
+  ));
 }
 
 class Main extends StatelessWidget {
@@ -11,8 +16,9 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Binario M',
-      theme: ThemeData.dark(useMaterial3: true),
-      themeMode: ThemeMode.system,
+      theme: ThemeData.light(useMaterial3: true),
+      darkTheme: ThemeData.dark(useMaterial3: true),
+      themeMode: context.watch<ThemeProvider>().themeMode,
       home: const HomePage(),
     );
   }
