@@ -56,7 +56,7 @@ class _TrainsTabState extends State<TrainsTab> {
             .then((value) {
           if (value is Station) {
             setState(() {
-              destination = value;
+              departure = value;
             });
           }
         }),
@@ -89,7 +89,7 @@ class _TrainsTabState extends State<TrainsTab> {
       GestureDetector(
         onTap: () => _showDialog(
           CupertinoDatePicker(
-            minimumDate: DateTime.now(),
+            minimumDate: DateTime.now().add(const Duration(days: -1)),
             initialDateTime: DateTime.now(),
             mode: CupertinoDatePickerMode.dateAndTime,
             use24hFormat: true,
@@ -112,7 +112,7 @@ class _TrainsTabState extends State<TrainsTab> {
         width: double.infinity,
         height: 50,
         child: FloatingActionButton.extended(
-          onPressed: () async {
+          onPressed: () {
             if (departure != null && destination != null) {
               selectedDate.add(Duration(hours: hour, minutes: minute));
               ViaggiaTreno.getSolutions(departure!, destination!, selectedDate)
@@ -124,6 +124,10 @@ class _TrainsTabState extends State<TrainsTab> {
                               date: selectedDate,
                               departure: departure!,
                               destination: destination!))));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Inserisci tutti i dati prima di cercare!')));
             }
           },
           icon: const Icon(CupertinoIcons.search),

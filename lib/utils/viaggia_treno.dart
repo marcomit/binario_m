@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:binario_m/models/news.dart';
 import 'package:binario_m/models/solution.dart';
 import 'package:binario_m/models/station.dart';
+import 'package:binario_m/models/train_info.dart';
 import 'package:binario_m/models/train_stop.dart';
 import 'package:binario_m/utils/global.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,7 +42,6 @@ class ViaggiaTreno {
     } catch (e) {
       debugPrint('Errore ${e.toString()}');
     }
-    debugPrint(solutions.length.toString());
     return solutions;
   }
 
@@ -67,6 +67,19 @@ class ViaggiaTreno {
       debugPrint(response.body);
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => TrainStop.fromJson(e))
+          .toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
+
+  static Future<List<TrainInfo>> searchTrainNumber(String trainNumber) async {
+    try {
+      final Response response =
+          await get(Uri.parse('$baseUrl/cercaNumeroTreno/$trainNumber'));
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => TrainInfo.fromJson(e))
           .toList();
     } catch (e) {
       debugPrint(e.toString());
