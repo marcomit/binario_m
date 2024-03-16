@@ -35,7 +35,7 @@ class _SolutionsPageState extends State<SolutionsPage> {
           title: const Text('Soluzioni'),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: ListView(children: [
             for (final solution in widget.solutions) solutionCard(solution)
           ]),
@@ -46,63 +46,71 @@ class _SolutionsPageState extends State<SolutionsPage> {
 
   Widget solutionCard(Solution solution) {
     return Card(
-      child: Column(
-        children: solution.vehicles
-            .map((vehicle) => GestureDetector(
-                  onTap: () async {},
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    height: 100,
-                    child: Center(
-                      child: Timeline.tileBuilder(
-                        theme: TimelineThemeData(
-                          nodePosition: 0,
-                          nodeItemOverlap: true,
-                          connectorTheme: const ConnectorThemeData(
-                            color: Color(0xff383838),
-                            thickness: 15.0,
-                          ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final vehicle in solution.vehicles)
+              GestureDetector(
+                onTap: () async {},
+                child: SizedBox(
+                  height: 100,
+                  child: Center(
+                    child: Timeline.tileBuilder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      theme: TimelineThemeData(
+                        nodePosition: 0,
+                        nodeItemOverlap: true,
+                        connectorTheme: const ConnectorThemeData(
+                          color: Color(0xff383838),
+                          thickness: 15.0,
                         ),
-                        padding: const EdgeInsets.only(top: 20.0),
-                        builder: TimelineTileBuilder.connected(
-                          indicatorBuilder: (context, index) {
-                            const status = TrainState.inProgress;
-                            return OutlinedDotIndicator(
-                              color: status.isDone
-                                  ? const Color(0xff6ad192)
-                                  : const Color(0xff343434),
-                              backgroundColor: status.isDone
-                                  ? const Color(0xff494949)
-                                  : const Color(0xffc2c5c9),
-                              borderWidth: status.isDone ? 3.0 : 2.5,
-                            );
-                          },
-                          connectorBuilder: (context, index, connectorType) {
-                            return const SolidLineConnector();
-                          },
-                          contentsBuilder: (context, index) {
-                            return SizedBox(
-                              height: 40,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Container(
-                                  margin: const EdgeInsets.only(left: 10.0),
-                                  child: Text(
-                                    index == 0
-                                        ? '${formatNumber(vehicle.orarioPartenza.hour)}:${formatNumber(vehicle.orarioPartenza.minute)} ${vehicle.origine}'
-                                        : '${formatNumber(vehicle.orarioArrivo.hour)}:${formatNumber(vehicle.orarioArrivo.minute)} ${vehicle.destinazione}',
-                                  ),
+                      ),
+                      padding: const EdgeInsets.only(top: 20.0),
+                      builder: TimelineTileBuilder.connected(
+                        indicatorBuilder: (context, index) {
+                          const status = TrainState.inProgress;
+                          return OutlinedDotIndicator(
+                            color: status.isDone
+                                ? const Color(0xff6ad192)
+                                : const Color(0xff343434),
+                            backgroundColor: status.isDone
+                                ? const Color(0xff494949)
+                                : const Color(0xffc2c5c9),
+                            borderWidth: status.isDone ? 3.0 : 2.5,
+                          );
+                        },
+                        connectorBuilder: (context, index, connectorType) {
+                          return const SolidLineConnector();
+                        },
+                        contentsBuilder: (context, index) {
+                          return SizedBox(
+                            height: 40,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  index == 0
+                                      ? '${formatNumber(vehicle.orarioPartenza.hour)}:${formatNumber(vehicle.orarioPartenza.minute)} ${vehicle.origine}'
+                                      : '${formatNumber(vehicle.orarioArrivo.hour)}:${formatNumber(vehicle.orarioArrivo.minute)} ${vehicle.destinazione}',
                                 ),
                               ),
-                            );
-                          },
-                          itemCount: 2,
-                        ),
+                            ),
+                          );
+                        },
+                        itemCount: 2,
                       ),
                     ),
                   ),
-                ))
-            .toList(),
+                ),
+              ),
+            Text(
+                '${formatNumber(solution.duration.inMinutes ~/ 60)}:${formatNumber(solution.duration.inMinutes % 60)}'),
+          ],
+        ),
       ),
     );
   }

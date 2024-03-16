@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
         child: tabs[_selectedIndex].page,
       )),
       bottomNavigationBar: GNav(
