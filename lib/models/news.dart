@@ -11,6 +11,6 @@ class News {
   factory News.fromJson(Map<String, dynamic> json) => News(
       date: json['data'],
       title: json['titolo'],
-      firstLayer: json['primoPiano'],
+      firstLayer: json['primoPiano'] == 'true',
       text: json['testo']);
 }

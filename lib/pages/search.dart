@@ -3,7 +3,8 @@ import 'package:binario_m/utils/viaggia_treno.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  final String title;
+  const SearchPage({super.key, required this.title});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -17,7 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Stazioni'),
+          title: Text(widget.title),
         ),
         body: ListView(
           children: [
@@ -39,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
                 },
               ),
             ),
-            if (isLoading) const Text('Loading ...'),
+            if (isLoading) const CircularProgressIndicator(),
             for (final station in stations) stationCard(station: station)
           ],
         ));

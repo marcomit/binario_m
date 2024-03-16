@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:binario_m/models/news.dart';
 import 'package:binario_m/models/solution.dart';
 import 'package:binario_m/models/station.dart';
+import 'package:binario_m/models/train_stop.dart';
+import 'package:binario_m/utils/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -48,20 +50,27 @@ class ViaggiaTreno {
     final news = (jsonDecode(response.body) as List<dynamic>)
         .map((e) => News.fromJson(e))
         .toList();
-    debugPrint(news.toString());
+    debugPrint(news.length.toString());
+    if (news.isNotEmpty) {
+      debugPrint(news[0].text);
+    }
     return news;
   }
 
-  static Future<List<dynamic>> getDepartures(Station station) async {
+  static Future<List<TrainStop>> getDepartures(Station station) async {
     final now = DateTime.now();
-    final timezoneName = now.timeZoneName;
-    final offset = now.timeZoneOffset.inHours.abs().toString().padLeft(2, '0');
     final formattedTimezoneString =
-        "GMT${offset.replaceAll('-', '+')} ($timezoneName)";
-
-    print(formattedTimezoneString);
-    final Response response =
-        await get(Uri.parse('$baseUrl/partenze/${station.id}/'));
-    return jsonDecode(response.body) as List<dynamic>;
+        "GMT${now.timeZoneOffset.inHours.abs().toString().padLeft(2, '0').replaceAll('-', '+')} (${now.timeZoneName})";
+    try {
+      final Response response = await get(Uri.parse(
+          '$baseUrl/partenze/${station.id}/${days[now.weekday - 1].substring(0, 3)} ${months[now.month - 1].substring(0, 3)} ${now.day} ${now.year} $formattedTimezoneString'));
+      debugPrint(response.body);
+      return (jsonDecode(response.body) as List<dynamic>)
+          .map((e) => TrainStop.fromJson(e))
+          .toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
   }
 }

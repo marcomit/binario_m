@@ -1,16 +1,28 @@
+enum Tabs { route, train, station }
+
 const List<String> months = [
-  'Gennaio',
-  'Febbraio',
-  'Marzo',
-  'Aprile',
-  'Maggio',
-  'Giugno',
-  'Luglio',
-  'Agosto',
-  'Settembre',
-  'Ottobre',
-  'Novembre',
-  'Dicembre'
+  'Genuary',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
+const List<String> days = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
 ];
 
 String formatNumber(int number) {
