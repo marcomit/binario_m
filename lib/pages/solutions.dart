@@ -1,5 +1,6 @@
 import 'package:binario_m/models/solution.dart';
 import 'package:binario_m/models/station.dart';
+import 'package:binario_m/pages/train_details.dart';
 import 'package:binario_m/utils/global.dart';
 import 'package:binario_m/utils/viaggia_treno.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,16 @@ class _SolutionsPageState extends State<SolutionsPage> {
           children: [
             for (final vehicle in solution.vehicles)
               GestureDetector(
-                onTap: () async {},
+                onTap: () async {
+                  final trainInfo =
+                      await ViaggiaTreno.searchTrainNumber(vehicle.numeroTreno);
+                  if (trainInfo == null) return;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              TrainDetailsPage(trainInfo: trainInfo)));
+                },
                 child: SizedBox(
                   height: 100,
                   child: Center(
@@ -72,14 +82,14 @@ class _SolutionsPageState extends State<SolutionsPage> {
                       builder: TimelineTileBuilder.connected(
                         indicatorBuilder: (context, index) {
                           const status = TrainState.inProgress;
-                          return OutlinedDotIndicator(
-                            color: status.isDone
-                                ? const Color(0xff6ad192)
-                                : const Color(0xff343434),
-                            backgroundColor: status.isDone
-                                ? const Color(0xff494949)
-                                : const Color(0xffc2c5c9),
-                            borderWidth: status.isDone ? 3.0 : 2.5,
+                          return const OutlinedDotIndicator(
+                            color: status == TrainState.done
+                                ? Color(0xff6ad192)
+                                : Color(0xff343434),
+                            backgroundColor: status == TrainState.done
+                                ? Color(0xff494949)
+                                : Color(0xffc2c5c9),
+                            borderWidth: status == TrainState.done ? 3.0 : 2.5,
                           );
                         },
                         connectorBuilder: (context, index, connectorType) {
@@ -114,11 +124,4 @@ class _SolutionsPageState extends State<SolutionsPage> {
       ),
     );
   }
-}
-
-enum TrainState { done, inProgress, todo }
-
-extension on TrainState {
-  bool get isInProgress => this == TrainState.inProgress;
-  bool get isDone => this == TrainState.done;
 }

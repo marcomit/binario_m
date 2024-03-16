@@ -29,3 +29,10 @@ String formatNumber(int number) {
   if (number < 10) return '0$number';
   return '$number';
 }
+
+enum TrainState { done, inProgress, todo }
+
+extension on TrainState {
+  bool get isInProgress => this == TrainState.inProgress;
+  bool get isDone => this == TrainState.done;
+}

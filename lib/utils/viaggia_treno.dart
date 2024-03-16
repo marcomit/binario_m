@@ -74,12 +74,23 @@ class ViaggiaTreno {
     }
   }
 
-  static Future<List<TrainInfo>> searchTrainNumber(String trainNumber) async {
+  static Future<TrainInfo?> searchTrainNumber(String trainNumber) async {
     try {
       final Response response =
           await get(Uri.parse('$baseUrl/cercaNumeroTreno/$trainNumber'));
+      return TrainInfo.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+  static Future<List<dynamic>> getTrainDetails(TrainInfo trainInfo) async {
+    try {
+      final response = await get(Uri.parse(
+          '$baseUrl/tratteCanvas/${trainInfo.codLocOrig}/${trainInfo.numeroTreno}/${trainInfo.dataPartenza}'));
       return (jsonDecode(response.body) as List<dynamic>)
-          .map((e) => TrainInfo.fromJson(e))
+          .map((e) => e)
           .toList();
     } catch (e) {
       debugPrint(e.toString());

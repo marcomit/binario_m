@@ -19,7 +19,7 @@ class TrainInfo {
         numeroTreno: json['numeroTreno'],
         codLocOrig: json['codLocOrig'],
         descLocOrig: json['descLocOrig'],
-        dataPartenza: json['dataPartenza'],
+        dataPartenza: json['dataPartenza'].toString(),
         corsa: json['corsa'],
         h24: json['h24'] == 'true');
   }
