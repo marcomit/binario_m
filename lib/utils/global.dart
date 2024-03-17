@@ -30,6 +30,11 @@ String formatNumber(int number) {
   return '$number';
 }
 
+String formatDate(DateTime? date) {
+  if (date == null) return '--:--';
+  return '${formatNumber(date.hour)}:${formatNumber(date.minute)}';
+}
+
 enum TrainState { done, inProgress, todo }
 
 extension on TrainState {

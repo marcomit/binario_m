@@ -41,41 +41,48 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                       nodeItemOverlap: true,
                       connectorTheme: const ConnectorThemeData(
                         color: Color(0xff383838),
-                        thickness: 15.0,
+                        thickness: 2.0,
                       ),
                     ),
-                    padding: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 30),
                     builder: TimelineTileBuilder.connected(
                       indicatorBuilder: (context, index) {
                         final current = snapshot.data![index];
                         return OutlinedDotIndicator(
-                          color: current['partenzaReale'] == true
+                          color: current['partenzaReale'] == true ||
+                                  current['last']
                               ? Color(0xff6ad192)
                               : Color(0xff343434),
-                          backgroundColor: current['partenzaReale'] == true
-                              ? Color(0xff494949)
-                              : Color(0xffc2c5c9),
+                          backgroundColor: Color(0xff494949),
                           borderWidth:
                               current['partenzaReale'] == true ? 3.0 : 2.5,
                         );
                       },
                       connectorBuilder: (context, index, connectorType) {
-                        return const SolidLineConnector();
+                        final current = snapshot.data![index];
+                        return DashedLineConnector(
+                            color: current['partenzaReale'] == true
+                                ? Color(0xff6ad192)
+                                : Color(0xff343434));
                       },
                       contentsBuilder: (context, index) {
                         final current = snapshot.data![index];
                         final programmata = DateTime.fromMillisecondsSinceEpoch(
                             current['fermata']['programmata']);
                         return SizedBox(
-                          height: 40,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                  '${formatNumber(programmata.hour)}:${formatNumber(programmata.minute)} ${current['stazione']}'),
-                            ),
-                          ),
+                          height: 100,
+                          child: Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(current['stazione']),
+                                  Text(
+                                      'Arrivo ${formatDate(current['fermata']['arrivo_teorica'] == null ? null : DateTime.fromMillisecondsSinceEpoch(current['fermata']['arrivo_teorica']))}'),
+                                  Text(
+                                      'Partenza ${formatDate(current['fermata']['partenza_teorica'] == null ? null : DateTime.fromMillisecondsSinceEpoch(current['fermata']['partenza_teorica']))}')
+                                ],
+                              )),
                         );
                       },
                       itemCount: snapshot.data!.length,
