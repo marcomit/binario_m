@@ -6,7 +6,9 @@ import 'package:timelines/timelines.dart';
 
 class TrainDetailsPage extends StatefulWidget {
   final TrainInfo trainInfo;
-  const TrainDetailsPage({super.key, required this.trainInfo});
+  final bool isToday;
+  const TrainDetailsPage(
+      {super.key, required this.trainInfo, required this.isToday});
 
   @override
   State<TrainDetailsPage> createState() => _TrainDetailsPageState();
@@ -49,21 +51,30 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                       indicatorBuilder: (context, index) {
                         final current = snapshot.data![index];
                         return OutlinedDotIndicator(
-                          color: current['partenzaReale'] == true ||
-                                  current['last']
-                              ? Color(0xff6ad192)
-                              : Color(0xff343434),
-                          backgroundColor: Color(0xff494949),
+                          color: const Color(0xff343434),
+                          backgroundColor:
+                              current['arrivoReale'] == true && widget.isToday
+                                  ? const Color(0xff6ad192)
+                                  : const Color(0xff343434),
                           borderWidth:
                               current['partenzaReale'] == true ? 3.0 : 2.5,
                         );
                       },
                       connectorBuilder: (context, index, connectorType) {
                         final current = snapshot.data![index];
-                        return DashedLineConnector(
-                            color: current['partenzaReale'] == true
-                                ? Color(0xff6ad192)
-                                : Color(0xff343434));
+                        Color color = const Color(0xff6ad192);
+                        if (!widget.isToday) {
+                          color = const Color(0xff343434);
+                        } else if (connectorType == ConnectorType.end) {
+                          if (!current['arrivoReale']) {
+                            color = const Color(0xff343434);
+                          }
+                        } else {
+                          if (!current['partenzaReale']) {
+                            color = const Color(0xff343434);
+                          }
+                        }
+                        return DashedLineConnector(color: color);
                       },
                       contentsBuilder: (context, index) {
                         final current = snapshot.data![index];
@@ -73,14 +84,86 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                           height: 100,
                           child: Padding(
                               padding: const EdgeInsets.only(left: 5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  Text(current['stazione']),
-                                  Text(
-                                      'Arrivo ${formatDate(current['fermata']['arrivo_teorica'] == null ? null : DateTime.fromMillisecondsSinceEpoch(current['fermata']['arrivo_teorica']))}'),
-                                  Text(
-                                      'Partenza ${formatDate(current['fermata']['partenza_teorica'] == null ? null : DateTime.fromMillisecondsSinceEpoch(current['fermata']['partenza_teorica']))}')
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(current['stazione']),
+                                      Row(
+                                        children: [
+                                          const Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Arrivo'),
+                                              Text('Partenza'),
+                                            ],
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(formatDate(current['fermata']
+                                                          ['arrivo_teorico'] ==
+                                                      null
+                                                  ? null
+                                                  : DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          current['fermata'][
+                                                              'arrivo_teorico']))),
+                                              Text(formatDate(current['fermata']
+                                                          [
+                                                          'partenza_teorica'] ==
+                                                      null
+                                                  ? null
+                                                  : DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          current['fermata'][
+                                                              'partenza_teorica'])))
+                                            ],
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(formatDate(current['fermata']
+                                                          ['arrivoReale'] ==
+                                                      null
+                                                  ? null
+                                                  : DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          current['fermata'][
+                                                              'arrivoReale']))),
+                                              Text(formatDate(current['fermata']
+                                                          ['partenzaReale'] ==
+                                                      null
+                                                  ? null
+                                                  : DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          current['fermata'][
+                                                              'partenzaReale'])))
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  Column(
+                                    children: [
+                                      const Text(""),
+                                      Text(current['fermata'][
+                                              'binarioEffettivoArrivoDescrizione']
+                                          .toString()),
+                                      Text(current['fermata'][
+                                              'binarioEffettivoPartenzaDescrizione']
+                                          .toString()),
+                                    ],
+                                  )
                                 ],
                               )),
                         );

@@ -40,7 +40,8 @@ class _SearchPageState extends State<SearchPage> {
                 },
               ),
             ),
-            if (isLoading) const CircularProgressIndicator(),
+            if (isLoading)
+              const Center(child: SizedBox(child: CircularProgressIndicator())),
             for (final station in stations) stationCard(station: station)
           ],
         ));

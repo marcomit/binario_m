@@ -1,4 +1,5 @@
 import 'package:binario_m/pages/tabs/news.dart';
+import 'package:binario_m/pages/tabs/table.dart';
 import 'package:binario_m/pages/tabs/train_stops.dart';
 import 'package:binario_m/pages/tabs/trains.dart';
 import 'package:binario_m/providers/theme.dart';
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   final List<NavbarItem> tabs = [
     NavbarItem(
         const GButton(
-          icon: CupertinoIcons.home,
+          icon: CupertinoIcons.train_style_two,
           text: 'Tratta',
         ),
         const TrainsTab()),
@@ -33,10 +34,10 @@ class _HomePageState extends State<HomePage> {
         const TrainStopTab()),
     NavbarItem(
         const GButton(
-          icon: CupertinoIcons.train_style_one,
-          text: 'Treno',
+          icon: CupertinoIcons.table,
+          text: 'Tabellone',
         ),
-        const TrainStopTab()),
+        const TableTab()),
     NavbarItem(
         const GButton(
           icon: CupertinoIcons.news,

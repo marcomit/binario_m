@@ -3,11 +3,14 @@ import 'package:binario_m/providers/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
+
 void main() {
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
     child: const Main(),
   ));
+  
 }
 
 class Main extends StatelessWidget {
@@ -24,3 +27,4 @@ class Main extends StatelessWidget {
     );
   }
 }
+

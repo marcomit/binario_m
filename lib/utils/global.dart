@@ -41,3 +41,16 @@ extension on TrainState {
   bool get isInProgress => this == TrainState.inProgress;
   bool get isDone => this == TrainState.done;
 }
+
+bool isToday(DateTime date) {
+  final now = DateTime.now();
+  return date.day == now.day &&
+      date.month == now.month &&
+      date.year == now.year;
+}
+
+String replaceOn(String? from, String? onValue, String to) {
+  if (from == onValue) return to;
+  if (from != null) return from;
+  return "null";
+}

@@ -61,10 +61,12 @@ class _TrainsTabState extends State<TrainsTab> {
           }
         }),
         child: ListTile(
-            leading: Transform.rotate(
-                angle: -math.pi / 4,
-                child: const Icon(CupertinoIcons.arrow_right)),
-            title: Text(departure == null ? 'Partenza' : departure!.nomeBreve)),
+          leading: Transform.rotate(
+              angle: -math.pi / 4,
+              child: const Icon(CupertinoIcons.arrow_right)),
+          title: Text(departure == null ? 'Partenza' : departure!.nomeBreve),
+          trailing: Text(departure == null ? '' : departure!.id),
+        ),
       ),
       GestureDetector(
         onTap: () => Navigator.push(
@@ -79,12 +81,12 @@ class _TrainsTabState extends State<TrainsTab> {
           }
         }),
         child: ListTile(
-          leading: Transform.rotate(
-              angle: math.pi / 4,
-              child: const Icon(CupertinoIcons.arrow_right)),
-          title: Text(
-              destination == null ? 'Destinazione' : destination!.nomeBreve),
-        ),
+            leading: Transform.rotate(
+                angle: math.pi / 4,
+                child: const Icon(CupertinoIcons.arrow_right)),
+            title: Text(
+                destination == null ? 'Destinazione' : destination!.nomeBreve),
+            trailing: Text(destination == null ? '' : destination!.id)),
       ),
       GestureDetector(
         onTap: () => _showDialog(
@@ -102,7 +104,7 @@ class _TrainsTabState extends State<TrainsTab> {
         child: ListTile(
           leading: const Icon(CupertinoIcons.calendar),
           title: Text(
-              '${formatNumber(selectedDate.day)} ${months[selectedDate.month]}'),
+              '${formatNumber(selectedDate.day)} ${months[selectedDate.month - 1]}'),
           trailing: Text(
               '${formatNumber(selectedDate.hour)}:${formatNumber(selectedDate.minute)}'),
         ),

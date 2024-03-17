@@ -62,8 +62,9 @@ class _SolutionsPageState extends State<SolutionsPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) =>
-                              TrainDetailsPage(trainInfo: trainInfo)));
+                          builder: (_) => TrainDetailsPage(
+                              trainInfo: trainInfo,
+                              isToday: isToday(vehicle.orarioPartenza))));
                 },
                 child: SizedBox(
                   height: 100,
