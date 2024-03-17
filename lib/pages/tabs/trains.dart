@@ -136,6 +136,7 @@ class _TrainsTabState extends State<TrainsTab> {
           label: const Text('Cerca'),
         ),
       ),
+      const SizedBox(height: 20),
     ]);
   }
 }

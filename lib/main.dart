@@ -1,11 +1,14 @@
 import 'package:binario_m/pages/home.dart';
 import 'package:binario_m/providers/theme.dart';
+import 'package:binario_m/utils/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorage.initDb();
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
     child: const Main(),
