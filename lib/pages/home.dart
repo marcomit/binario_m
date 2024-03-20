@@ -1,5 +1,5 @@
 import 'package:binario_m/pages/tabs/news.dart';
-import 'package:binario_m/pages/tabs/table.dart';
+import 'package:binario_m/pages/tabs/station.dart';
 import 'package:binario_m/pages/tabs/train_stops.dart';
 import 'package:binario_m/pages/tabs/trains.dart';
 import 'package:binario_m/providers/theme.dart';
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
           icon: CupertinoIcons.table,
           text: 'Tabellone',
         ),
-        const TableTab()),
+        const StationTab()),
     NavbarItem(
         const GButton(
           icon: CupertinoIcons.news,

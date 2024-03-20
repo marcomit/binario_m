@@ -1,6 +1,7 @@
 import 'package:binario_m/models/train_info.dart';
 import 'package:binario_m/utils/global.dart';
 import 'package:binario_m/utils/viaggia_treno.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
 
@@ -22,7 +23,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
     return RefreshIndicator(
       onRefresh: () async => setState(() => refresh++),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Dettagli tratta')),
+        appBar: AppBar(title: Text(widget.trainInfo.numeroTreno)),
         body: FutureBuilder(
           future: ViaggiaTreno.getTrainDetails(widget.trainInfo),
           builder: (_, snapshot) {
@@ -46,7 +47,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                         thickness: 2.0,
                       ),
                     ),
-                    padding: const EdgeInsets.only(top: 20.0, bottom: 30),
+                    padding: const EdgeInsets.only(bottom: 50),
                     builder: TimelineTileBuilder.connected(
                       indicatorBuilder: (context, index) {
                         final current = snapshot.data![index];
@@ -55,9 +56,8 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                           backgroundColor:
                               current['arrivoReale'] == true && widget.isToday
                                   ? const Color(0xff6ad192)
-                                  : const Color(0xff343434),
-                          borderWidth:
-                              current['partenzaReale'] == true ? 3.0 : 2.5,
+                                  : const Color(0xff222222),
+                          borderWidth: 3.0,
                         );
                       },
                       connectorBuilder: (context, index, connectorType) {
@@ -78,19 +78,24 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                       },
                       contentsBuilder: (context, index) {
                         final current = snapshot.data![index];
-                        final programmata = DateTime.fromMillisecondsSinceEpoch(
-                            current['fermata']['programmata']);
                         return SizedBox(
-                          height: 100,
+                          height: 80,
                           child: Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Transform.translate(
+                              offset: const Offset(0, 30),
                               child: Row(
                                 children: [
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(current['stazione']),
+                                      Text(
+                                        current['stazione'],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 5),
                                       Row(
                                         children: [
                                           const Column(
@@ -165,7 +170,9 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                     ],
                                   )
                                 ],
-                              )),
+                              ),
+                            ),
+                          ),
                         );
                       },
                       itemCount: snapshot.data!.length,

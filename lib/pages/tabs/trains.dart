@@ -66,28 +66,32 @@ class _TrainsTabState extends State<TrainsTab> {
               child: const Icon(CupertinoIcons.arrow_right)),
           title: Text(departure == null ? 'Partenza' : departure!.nomeBreve),
           trailing: Text(departure == null ? '' : departure!.id),
+          subtitle: Text(departure == null ? '' : departure!.nomeLungo),
         ),
       ),
       GestureDetector(
-        onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const SearchPage(title: "Destinazione")))
-            .then((value) {
-          if (value is Station) {
-            setState(() {
-              destination = value;
-            });
-          }
-        }),
-        child: ListTile(
-            leading: Transform.rotate(
-                angle: math.pi / 4,
-                child: const Icon(CupertinoIcons.arrow_right)),
-            title: Text(
-                destination == null ? 'Destinazione' : destination!.nomeBreve),
-            trailing: Text(destination == null ? '' : destination!.id)),
-      ),
+          onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              const SearchPage(title: "Destinazione")))
+                  .then((value) {
+                if (value is Station) {
+                  setState(() {
+                    destination = value;
+                  });
+                }
+              }),
+          child: ListTile(
+              leading: Transform.rotate(
+                  angle: math.pi / 4,
+                  child: const Icon(CupertinoIcons.arrow_right)),
+              title: Text(destination == null
+                  ? 'Destinazione'
+                  : destination!.nomeBreve),
+              trailing: Text(destination == null ? '' : destination!.id),
+              subtitle:
+                  Text(destination == null ? '' : destination!.nomeLungo))),
       GestureDetector(
         onTap: () => _showDialog(
           CupertinoDatePicker(

@@ -4,16 +4,13 @@ import 'package:binario_m/utils/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalStorage.initDb();
+  LocalStorage.db = await LocalStorage.initDb();
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
     child: const Main(),
   ));
-  
 }
 
 class Main extends StatelessWidget {
@@ -30,4 +27,3 @@ class Main extends StatelessWidget {
     );
   }
 }
-

@@ -24,7 +24,7 @@ class ViaggiaTreno {
         }
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("searchStations$e");
     }
     return stations;
   }
@@ -40,7 +40,7 @@ class ViaggiaTreno {
         solutions.add(Solution.fronJson(solution));
       }
     } catch (e) {
-      debugPrint('Errore ${e.toString()}');
+      debugPrint('getSolutions ${e.toString()}');
     }
     return solutions;
   }
@@ -57,19 +57,20 @@ class ViaggiaTreno {
     return news;
   }
 
-  static Future<List<TrainStop>> getDepartures(Station station) async {
+  static Future<List<TrainStop>> getTable(Station station,
+      [bool isArrival = true]) async {
     final now = DateTime.now();
     final formattedTimezoneString =
         "GMT${now.timeZoneOffset.inHours.abs().toString().padLeft(2, '0').replaceAll('-', '+')} (${now.timeZoneName})";
     try {
       final Response response = await get(Uri.parse(
-          '$baseUrl/partenze/${station.id}/${days[now.weekday - 1].substring(0, 3)} ${months[now.month - 1].substring(0, 3)} ${now.day} ${now.year} $formattedTimezoneString'));
+          '$baseUrl/${isArrival ? 'arrivi' : 'partenze'}/${station.id}/${days[now.weekday - 1].substring(0, 3)} ${months[now.month - 1].substring(0, 3)} ${now.day} ${now.year} $formattedTimezoneString'));
       debugPrint(response.body);
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => TrainStop.fromJson(e))
           .toList();
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("get table error$e");
       return [];
     }
   }
@@ -78,9 +79,10 @@ class ViaggiaTreno {
     try {
       final Response response =
           await get(Uri.parse('$baseUrl/cercaNumeroTreno/$trainNumber'));
+      debugPrint(trainNumber + response.body);
       return TrainInfo.fromJson(jsonDecode(response.body));
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("searchTrainNumber: $e");
       return null;
     }
   }
@@ -93,7 +95,7 @@ class ViaggiaTreno {
           .map((e) => e)
           .toList();
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("getTrainDetails$e");
       return [];
     }
   }

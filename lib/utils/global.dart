@@ -49,8 +49,8 @@ bool isToday(DateTime date) {
       date.year == now.year;
 }
 
-String replaceOn(String? from, String? onValue, String to) {
+T replaceOn<T>(T? from, T? onValue, T to) {
   if (from == onValue) return to;
   if (from != null) return from;
-  return "null";
+  return to;
 }

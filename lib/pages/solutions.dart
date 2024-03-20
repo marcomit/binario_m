@@ -10,8 +10,8 @@ class SolutionsPage extends StatefulWidget {
   final Station departure;
   final Station destination;
   final DateTime date;
-  List<Solution> solutions = [];
-  SolutionsPage(
+  final List<Solution> solutions;
+  const SolutionsPage(
       {super.key,
       required this.solutions,
       required this.date,
@@ -23,13 +23,20 @@ class SolutionsPage extends StatefulWidget {
 }
 
 class _SolutionsPageState extends State<SolutionsPage> {
+  List<Solution> solutions = [];
+  @override
+  void initState() {
+    super.initState();
+    setState(() => solutions = widget.solutions);
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        final solutions = await ViaggiaTreno.getSolutions(
+        final fetchedSolutions = await ViaggiaTreno.getSolutions(
             widget.departure, widget.destination, widget.date);
-        setState(() => widget.solutions = solutions);
+        setState(() => solutions = fetchedSolutions);
       },
       child: Scaffold(
         appBar: AppBar(
@@ -48,7 +55,7 @@ class _SolutionsPageState extends State<SolutionsPage> {
   Widget solutionCard(Solution solution) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,56 +73,64 @@ class _SolutionsPageState extends State<SolutionsPage> {
                               trainInfo: trainInfo,
                               isToday: isToday(vehicle.orarioPartenza))));
                 },
-                child: SizedBox(
-                  height: 100,
-                  child: Center(
-                    child: Timeline.tileBuilder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      theme: TimelineThemeData(
-                        nodePosition: 0,
-                        nodeItemOverlap: true,
-                        connectorTheme: const ConnectorThemeData(
-                          color: Color(0xff383838),
-                          thickness: 15.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        '${vehicle.categoriaDescrizione} ${vehicle.numeroTreno}',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      height: 80,
+                      child: Center(
+                        child: Timeline.tileBuilder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          theme: TimelineThemeData(
+                            nodePosition: 0,
+                            nodeItemOverlap: true,
+                            connectorTheme: const ConnectorThemeData(
+                              color: Color(0xff383838),
+                              thickness: 15.0,
+                            ),
+                          ),
+                          builder: TimelineTileBuilder.connected(
+                            indicatorBuilder: (context, index) {
+                              const status = TrainState.inProgress;
+                              return const OutlinedDotIndicator(
+                                color: status == TrainState.done
+                                    ? Color(0xff6ad192)
+                                    : Color(0xff343434),
+                                backgroundColor: status == TrainState.done
+                                    ? Color(0xff494949)
+                                    : Color(0xffc2c5c9),
+                                borderWidth:
+                                    status == TrainState.done ? 3.0 : 2.5,
+                              );
+                            },
+                            connectorBuilder: (context, index, connectorType) {
+                              return const SolidLineConnector();
+                            },
+                            contentsBuilder: (context, index) {
+                              return SizedBox(
+                                height: 40,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(left: 10.0),
+                                    child: Text(
+                                      index == 0
+                                          ? '${formatNumber(vehicle.orarioPartenza.hour)}:${formatNumber(vehicle.orarioPartenza.minute)} ${vehicle.origine}'
+                                          : '${formatNumber(vehicle.orarioArrivo.hour)}:${formatNumber(vehicle.orarioArrivo.minute)} ${vehicle.destinazione}',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            itemCount: 2,
+                          ),
                         ),
                       ),
-                      padding: const EdgeInsets.only(top: 20.0),
-                      builder: TimelineTileBuilder.connected(
-                        indicatorBuilder: (context, index) {
-                          const status = TrainState.inProgress;
-                          return const OutlinedDotIndicator(
-                            color: status == TrainState.done
-                                ? Color(0xff6ad192)
-                                : Color(0xff343434),
-                            backgroundColor: status == TrainState.done
-                                ? Color(0xff494949)
-                                : Color(0xffc2c5c9),
-                            borderWidth: status == TrainState.done ? 3.0 : 2.5,
-                          );
-                        },
-                        connectorBuilder: (context, index, connectorType) {
-                          return const SolidLineConnector();
-                        },
-                        contentsBuilder: (context, index) {
-                          return SizedBox(
-                            height: 40,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                margin: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  index == 0
-                                      ? '${formatNumber(vehicle.orarioPartenza.hour)}:${formatNumber(vehicle.orarioPartenza.minute)} ${vehicle.origine}'
-                                      : '${formatNumber(vehicle.orarioArrivo.hour)}:${formatNumber(vehicle.orarioArrivo.minute)} ${vehicle.destinazione}',
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        itemCount: 2,
-                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             Text(

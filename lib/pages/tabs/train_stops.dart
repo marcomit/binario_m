@@ -29,9 +29,9 @@ class _TrainStopTabState extends State<TrainStopTab> {
                         builder: (_) => const SearchPage(title: "Fermata")))
                 .then((value) async {
               if (value == null) return;
-              final res = await ViaggiaTreno.getDepartures(value as Station);
+              await ViaggiaTreno.getTable(value as Station);
               setState(() {
-                station = value as Station;
+                station = value;
               });
             });
           },

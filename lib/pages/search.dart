@@ -52,8 +52,8 @@ class _SearchPageState extends State<SearchPage> {
       onTap: () => Navigator.pop<Station>(context, station),
       child: Card(
         child: ListTile(
-          title: Text(station.nomeLungo),
-          subtitle: Text(station.nomeBreve),
+          title: Text(station.nomeBreve),
+          subtitle: Text(station.nomeLungo),
           trailing: Text(station.id),
         ),
       ),
