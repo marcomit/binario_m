@@ -1,6 +1,6 @@
 import 'package:binario_m/pages/tabs/news.dart';
+import 'package:binario_m/pages/tabs/routes.dart';
 import 'package:binario_m/pages/tabs/station.dart';
-import 'package:binario_m/pages/tabs/train_stops.dart';
 import 'package:binario_m/pages/tabs/trains.dart';
 import 'package:binario_m/providers/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
           icon: CupertinoIcons.alt,
           text: 'Stazione',
         ),
-        const TrainStopTab()),
+        const RoutesTab()),
     NavbarItem(
         const GButton(
           icon: CupertinoIcons.table,

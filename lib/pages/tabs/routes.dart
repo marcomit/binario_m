@@ -3,18 +3,17 @@ import 'package:binario_m/pages/search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/train_stop.dart';
 import '../../utils/viaggia_treno.dart';
 
-class TrainStopTab extends StatefulWidget {
-  const TrainStopTab({super.key});
+class RoutesTab extends StatefulWidget {
+  const RoutesTab({super.key});
 
   @override
-  State<TrainStopTab> createState() => _TrainStopTabState();
+  State<RoutesTab> createState() => _RoutesTabState();
 }
 
-class _TrainStopTabState extends State<TrainStopTab> {
-  List<TrainStop> trainStops = [];
+class _RoutesTabState extends State<RoutesTab> {
+  List<Route> trainStops = [];
   Station? station;
   @override
   Widget build(BuildContext context) {

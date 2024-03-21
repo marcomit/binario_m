@@ -39,6 +39,7 @@ class ViaggiaTreno {
           as List<dynamic>) {
         solutions.add(Solution.fronJson(solution));
       }
+      //debugPrint(response.body);
     } catch (e) {
       debugPrint('getSolutions ${e.toString()}');
     }
@@ -53,7 +54,7 @@ class ViaggiaTreno {
     return news;
   }
 
-  static Future<List<TrainStop>> getTable(Station station,
+  static Future<List<TrainRoute>> getTable(Station station,
       [bool isArrival = true]) async {
     final now = DateTime.now();
     try {
@@ -61,7 +62,7 @@ class ViaggiaTreno {
           '$baseUrl/${isArrival ? 'arrivi' : 'partenze'}/${station.id}/${days[now.weekday - 1].substring(0, 3)} ${months[now.month - 1].substring(0, 3)} ${now.day} ${now.year} ${now.hour}:${now.minute}:${now.second}'));
       debugPrint(response.body);
       return (jsonDecode(response.body) as List<dynamic>)
-          .map((e) => TrainStop.fromJson(e))
+          .map((e) => TrainRoute.fromJson(e))
           .toList();
     } catch (e) {
       debugPrint("get table error$e");

@@ -1,111 +1,53 @@
-class TrainStop {
-  final int? numeroTreno;
+class TrainRoute {
+  final int numeroTreno;
   final String? categoria;
   final String? categoriaDescrizione;
   final String? origine;
   final String? codOrigine;
-  final String destinazione;
-  final String? codDestinazione;
-  final String? origineEstera;
-  final String? destinazioneEstera;
-  final String? oraPartenzaEstera;
-  final String? oraArrivoEstera;
-  final String? binarioEffettivoArrivoCodice;
-  final String? binarioEffettivoArrivoDescrizione;
-  final String? binarioEffettivoArrivoTipo;
-  final String? binarioProgrammatoArrivoCodice;
-  final String? binarioProgrammatoArrivoDescrizione;
-  final String? binarioEffettivoPartenzaCodice;
-  final String? binarioEffettivoPartenzaDescrizione;
-  final String? binarioEffettivoPartenzaTipo;
-  final String? binarioProgrammatoPartenzaCodice;
-  final String binarioProgrammatoPartenzaDescrizione;
+  final bool inStazione;
+  final bool haCambiNumero;
   final bool nonPartito;
-  final int provvedimento;
-  final String riprogrammazione;
-  final int orarioPartenza;
-  final String? orarioArrivo;
-  final String? stazionePartenza;
-  final String? stazioneArrivo;
-  final String? statoTreno;
-  final String? corrispondenze;
-  final String? servizi;
   final int ritardo;
-  final int dataPartenzaTreno;
+  final String? compOrarioPartenzaZeroEffettivo;
+  final String? compOrarioArrivoZeroEffettivo;
+  final String? compOrarioPartenzaZero;
+  final String? compOrarioArrivoZero;
+  final String? compOrarioArrivo;
+  final String? compOrarioPartenza;
 
-  TrainStop({
-    required this.nonPartito,
-    required this.provvedimento,
-    required this.riprogrammazione,
-    required this.orarioPartenza,
-    this.orarioArrivo,
-    this.stazionePartenza,
-    this.stazioneArrivo,
-    this.statoTreno,
-    this.corrispondenze,
-    this.servizi,
-    required this.ritardo,
-    required this.dataPartenzaTreno,
-    this.numeroTreno,
-    this.categoria,
-    required this.destinazione,
-    this.categoriaDescrizione,
-    this.origine,
-    this.codOrigine,
-    this.codDestinazione,
-    this.origineEstera,
-    this.destinazioneEstera,
-    this.oraPartenzaEstera,
-    this.oraArrivoEstera,
-    this.binarioEffettivoArrivoCodice,
-    this.binarioEffettivoArrivoDescrizione,
-    this.binarioEffettivoArrivoTipo,
-    this.binarioProgrammatoArrivoCodice,
-    this.binarioProgrammatoArrivoDescrizione,
-    this.binarioEffettivoPartenzaCodice,
-    this.binarioEffettivoPartenzaDescrizione,
-    this.binarioEffettivoPartenzaTipo,
-    this.binarioProgrammatoPartenzaCodice,
-    this.binarioProgrammatoPartenzaDescrizione = "2",
-  });
+  TrainRoute(
+      {required this.numeroTreno,
+      required this.origine,
+      required this.categoria,
+      required this.categoriaDescrizione,
+      required this.codOrigine,
+      required this.haCambiNumero,
+      required this.inStazione,
+      required this.nonPartito,
+      required this.compOrarioArrivo,
+      required this.compOrarioArrivoZero,
+      required this.compOrarioArrivoZeroEffettivo,
+      required this.compOrarioPartenza,
+      required this.compOrarioPartenzaZero,
+      required this.compOrarioPartenzaZeroEffettivo,
+      required this.ritardo});
 
-  factory TrainStop.fromJson(Map<String, dynamic> json) => TrainStop(
-        nonPartito: json['nonPartito'],
-        provvedimento: json['provvedimento'],
-        riprogrammazione: json['riprogrammazione'],
-        orarioPartenza: json['orarioPartenza'],
-        orarioArrivo: json['orarioArrivo'],
-        stazionePartenza: json['stazionePartenza'],
-        stazioneArrivo: json['stazioneArrivo'],
-        statoTreno: json['statoTreno'],
-        corrispondenze: json['corrispondenze'],
-        servizi: json['servizi'],
-        ritardo: json['ritardo'],
-        dataPartenzaTreno: json['dataPartenzaTreno'],
-        numeroTreno: json['numeroTreno'],
-        categoria: json['categoria'],
-        destinazione: json['destinazione'],
-        categoriaDescrizione: json['categoriaDescrizione'],
-        origine: json['origine'],
-        codOrigine: json['codOrigine'],
-        codDestinazione: json['codDestinazione'],
-        origineEstera: json['origineEstera'],
-        destinazioneEstera: json['destinazioneEstera'],
-        oraPartenzaEstera: json['oraPartenzaEstera'],
-        oraArrivoEstera: json['oraArrivoEstera'],
-        binarioEffettivoArrivoDescrizione:
-            json['binarioEffettivoArrivoDescrizione'],
-        binarioEffettivoArrivoTipo: json['binarioEffettivoArrivoTipo'],
-        binarioProgrammatoArrivoCodice: json['binarioProgrammatoArrivoCodice'],
-        binarioProgrammatoArrivoDescrizione:
-            json['binarioProgrammatoArrivoDescrizione'],
-        binarioEffettivoPartenzaCodice: json['binarioEffettivoPartenzaCodice'],
-        binarioEffettivoPartenzaDescrizione:
-            json['binarioEffettivoPartenzaDescrizione'],
-        binarioEffettivoPartenzaTipo: json['binarioEffettivoPartenzaTipo'],
-        binarioProgrammatoPartenzaCodice:
-            json['binarioProgrammatoPartenzaCodice'],
-        binarioProgrammatoPartenzaDescrizione:
-            json['binarioProgrammatoPartenzaDescrizione'],
+  factory TrainRoute.fromJson(Map<String, dynamic> json) => TrainRoute(
+        numeroTreno: json["numeroTreno"],
+        categoria: json["categoria"],
+        categoriaDescrizione: json["categoriaDescrizione"],
+        origine: json["origine"],
+        codOrigine: json["codOrigine"],
+        haCambiNumero: json["haCambiNumero"],
+        inStazione: json["inStazione"],
+        nonPartito: json["nonPartito"],
+        compOrarioArrivo: json["compOrarioArrivo"],
+        compOrarioArrivoZero: json["compOrarioArrivoZero"],
+        compOrarioArrivoZeroEffettivo: json["compOrarioArrivoZeroEffettivo"],
+        compOrarioPartenza: json["compOrarioPartenza"],
+        compOrarioPartenzaZero: json["compOrarioPartenzaZero"],
+        compOrarioPartenzaZeroEffettivo:
+            json["compOrarioPartenzaZeroEffettivo"],
+        ritardo: json["ritardo"],
       );
 }
