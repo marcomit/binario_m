@@ -1,8 +1,12 @@
+import 'package:binario_m/models/station.dart';
+import 'package:binario_m/models/train_stop.dart';
+import 'package:binario_m/utils/viaggia_treno.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TablePage extends StatefulWidget {
-  const TablePage({super.key});
+  final Station station;
+  const TablePage({super.key, required this.station});
 
   @override
   State<TablePage> createState() => _TablePageState();
@@ -47,9 +51,29 @@ class _TablePageState extends State<TablePage> {
                     setState(() => _type = value);
                   }),
             ),
+            if (_type == TableType.departures)
+              departureList()
+            else
+              arrivalList(),
           ],
         ),
       ),
     );
+  }
+
+  Widget departureList() {
+    return FutureBuilder(
+        future: ViaggiaTreno.getTable(widget.station),
+        builder: ((context, snapshot) {
+          return const Center(child: CircularProgressIndicator());
+        }));
+  }
+
+  Widget arrivalList() {
+    return FutureBuilder(
+        future: ViaggiaTreno.getTable(widget.station, false),
+        builder: ((context, snapshot) {
+          return const Center(child: CircularProgressIndicator());
+        }));
   }
 }

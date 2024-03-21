@@ -1,6 +1,5 @@
 import 'package:binario_m/pages/search.dart';
 import 'package:binario_m/pages/table.dart';
-import 'package:binario_m/utils/viaggia_treno.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,18 +17,16 @@ class _StationTabState extends State<StationTab> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) =>
-                            const SearchPage(title: "Destinazione")))
-                .then((value) async {
-              if (value is Station) {
-                await ViaggiaTreno.getTable(value);
-                await ViaggiaTreno.getTable(value, false);
-                Navigator.push(context,
-                    CupertinoPageRoute(builder: (_) => const TablePage()));
-              }
+        onTap: () => Navigator.push<Station>(
+                context,
+                MaterialPageRoute(
+                    builder: (_) =>
+                        const SearchPage(title: "Destinazione"))).then((value) {
+              if (value == null) return;
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (_) => TablePage(station: value)));
             }),
         child: ListTile(
             leading: const Icon(CupertinoIcons.arrow_right),

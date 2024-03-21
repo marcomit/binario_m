@@ -50,21 +50,15 @@ class ViaggiaTreno {
     final news = (jsonDecode(response.body) as List<dynamic>)
         .map((e) => News.fromJson(e))
         .toList();
-    debugPrint(news.length.toString());
-    if (news.isNotEmpty) {
-      debugPrint(news[0].text);
-    }
     return news;
   }
 
   static Future<List<TrainStop>> getTable(Station station,
       [bool isArrival = true]) async {
     final now = DateTime.now();
-    final formattedTimezoneString =
-        "GMT${now.timeZoneOffset.inHours.abs().toString().padLeft(2, '0').replaceAll('-', '+')} (${now.timeZoneName})";
     try {
       final Response response = await get(Uri.parse(
-          '$baseUrl/${isArrival ? 'arrivi' : 'partenze'}/${station.id}/${days[now.weekday - 1].substring(0, 3)} ${months[now.month - 1].substring(0, 3)} ${now.day} ${now.year} $formattedTimezoneString'));
+          '$baseUrl/${isArrival ? 'arrivi' : 'partenze'}/${station.id}/${days[now.weekday - 1].substring(0, 3)} ${months[now.month - 1].substring(0, 3)} ${now.day} ${now.year} ${now.hour}:${now.minute}:${now.second}'));
       debugPrint(response.body);
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => TrainStop.fromJson(e))
@@ -79,10 +73,9 @@ class ViaggiaTreno {
     try {
       final Response response =
           await get(Uri.parse('$baseUrl/cercaNumeroTreno/$trainNumber'));
-      debugPrint(trainNumber + response.body);
       return TrainInfo.fromJson(jsonDecode(response.body));
     } catch (e) {
-      debugPrint("searchTrainNumber: $e");
+      debugPrint("searchTrainNumber: $trainNumber");
       return null;
     }
   }

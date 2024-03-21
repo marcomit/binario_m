@@ -37,11 +37,6 @@ String formatDate(DateTime? date) {
 
 enum TrainState { done, inProgress, todo }
 
-extension on TrainState {
-  bool get isInProgress => this == TrainState.inProgress;
-  bool get isDone => this == TrainState.done;
-}
-
 bool isToday(DateTime date) {
   final now = DateTime.now();
   return date.day == now.day &&
