@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -28,14 +27,10 @@ class _TrainsTabState extends State<TrainsTab> {
       builder: (BuildContext context) => Container(
         height: 216,
         padding: const EdgeInsets.only(top: 6.0),
-        // The Bottom margin is provided to align the popup above the system
-        // navigation bar.
         margin: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        // Provide a background color for the popup.
         color: CupertinoColors.systemBackground.resolveFrom(context),
-        // Use a SafeArea widget to avoid system overlaps.
         child: SafeArea(
           top: false,
           child: child,
@@ -118,18 +113,27 @@ class _TrainsTabState extends State<TrainsTab> {
         width: double.infinity,
         height: 50,
         child: FloatingActionButton.extended(
-          onPressed: () {
+          onPressed: () async {
             if (departure != null && destination != null) {
               selectedDate.add(Duration(hours: hour, minutes: minute));
+              /*await LocalStorage.insertRecentlySolutions(RecentlySolution(
+                  arrivalStation: destination!.nomeBreve,
+                  arrivalStationCode: destination!.id,
+                  date: selectedDate,
+                  departureStation: departure!.nomeBreve,
+                  departureStationCode: departure!.id));*/
               ViaggiaTreno.getSolutions(departure!, destination!, selectedDate)
-                  .then((value) => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => SolutionsPage(
-                              solutions: value,
-                              date: selectedDate,
-                              departure: departure!,
-                              destination: destination!))));
+                  .then((value) async {
+                if (value == null) return;
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => SolutionsPage(
+                            solutions: value,
+                            date: selectedDate,
+                            departure: departure!,
+                            destination: destination!)));
+              });
             } else {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   behavior: SnackBarBehavior.floating,

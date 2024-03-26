@@ -31,8 +31,18 @@ class _SearchPageState extends State<SearchPage> {
                     hintText: 'Cerca stazione...'),
                 onChanged: (value) async {
                   if (value.length < 2) return;
-                  setState(() => isLoading = true);
+                  setState(() {
+                    isLoading = true;
+                    isError = false;
+                  });
                   final response = await ViaggiaTreno.searchStations(value);
+                  if (response == null) {
+                    setState(() {
+                      isError = true;
+                      isLoading = false;
+                    });
+                    return;
+                  }
                   setState(() {
                     stations = response;
                     isLoading = false;
@@ -41,7 +51,13 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             if (isLoading)
-              const Center(child: SizedBox(child: CircularProgressIndicator())),
+              const Center(
+                  child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: CircularProgressIndicator())),
+            if (isError)
+              const Center(
+                  child: Text('Errore durante il recupero delle stazioni')),
             for (final station in stations) stationCard(station: station)
           ],
         ));

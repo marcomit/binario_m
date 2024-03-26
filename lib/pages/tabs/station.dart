@@ -2,7 +2,7 @@ import 'package:binario_m/pages/search.dart';
 import 'package:binario_m/pages/table.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:math' as math;
 import '../../models/station.dart';
 
 class StationTab extends StatefulWidget {
@@ -18,10 +18,10 @@ class _StationTabState extends State<StationTab> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () => Navigator.push<Station>(
-                context,
-                MaterialPageRoute(
-                    builder: (_) =>
-                        const SearchPage(title: "Destinazione"))).then((value) {
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const SearchPage(title: "Fermata")))
+                .then((value) {
               if (value == null) return;
               Navigator.push(
                   context,
@@ -29,7 +29,9 @@ class _StationTabState extends State<StationTab> {
                       builder: (_) => TablePage(station: value)));
             }),
         child: ListTile(
-            leading: const Icon(CupertinoIcons.arrow_right),
+            leading: Transform.rotate(
+                angle: -math.pi / 4,
+                child: const Icon(CupertinoIcons.arrow_right)),
             title: Text(station == null ? 'Stazione' : station!.nomeBreve),
             trailing: Text(station == null ? '' : station!.id),
             subtitle: Text(station == null ? '' : station!.nomeLungo)));

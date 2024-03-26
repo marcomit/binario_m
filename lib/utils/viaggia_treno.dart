@@ -3,65 +3,74 @@ import 'dart:convert';
 import 'package:binario_m/models/news.dart';
 import 'package:binario_m/models/solution.dart';
 import 'package:binario_m/models/station.dart';
+import 'package:binario_m/models/statistic.dart';
 import 'package:binario_m/models/train_info.dart';
-import 'package:binario_m/models/train_stop.dart';
+import 'package:binario_m/models/train_route.dart';
 import 'package:binario_m/utils/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 
 class ViaggiaTreno {
-  static const String baseUrl =
-      "http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno";
-  static Future<List<Station>> searchStations(String query) async {
-    List<Station> stations = [];
+  static Future<List<Station>?> searchStations(String stationName) async {
     try {
-      final response = await get(Uri.parse("$baseUrl/cercaStazione/$query"));
-      if (response.statusCode == 200) {
-        for (var item
-            in (jsonDecode(response.body.toString()) as List<dynamic>)) {
-          stations.add(Station.fromJson(json: item));
-        }
-      }
+      return (jsonDecode(
+                  (await _baseRequest(['cercaStazione', stationName])).body)
+              as List<dynamic>)
+          .map((json) => Station.fromJson(json))
+          .toList();
     } catch (e) {
       debugPrint("searchStations$e");
+      return null;
     }
-    return stations;
   }
 
-  static Future<List<Solution>> getSolutions(
+  static Future<List<Solution>?> getSolutions(
       Station departure, Station destination, DateTime date) async {
-    List<Solution> solutions = [];
     try {
-      final Response response = await get(Uri.parse(
-          '$baseUrl/soluzioniViaggioNew/${departure.idStation}/${destination.idStation}/${DateFormat('yyyy-MM-ddTHH:mm:ss').format(date)}'));
-      for (final solution in jsonDecode(response.body.toString())['soluzioni']
-          as List<dynamic>) {
-        solutions.add(Solution.fronJson(solution));
-      }
-      //debugPrint(response.body);
+      return (jsonDecode((await _baseRequest([
+        'soluzioniViaggioNew',
+        departure.idStation,
+        destination.idStation,
+        DateFormat('yyyy-MM-ddTHH:mm:ss').format(date)
+      ]))
+              .body)['soluzioni'] as List<dynamic>)
+          .map((e) => Solution.fromJson(e))
+          .toList();
     } catch (e) {
       debugPrint('getSolutions ${e.toString()}');
+      return null;
     }
-    return solutions;
   }
 
-  static Future<List<News>> getNews() async {
-    final Response response = await get(Uri.parse('$baseUrl/news/0/it'));
-    final news = (jsonDecode(response.body) as List<dynamic>)
-        .map((e) => News.fromJson(e))
-        .toList();
-    return news;
+  static Future<List<News>?> getNews() async {
+    try {
+      return (jsonDecode((await _baseRequest(['news', '0', 'it'])).body)
+              as List<dynamic>)
+          .map((e) => News.fromJson(e))
+          .toList();
+    } catch (e) {
+      debugPrint('getNews ${e.toString()}');
+      return null;
+    }
   }
 
   static Future<List<TrainRoute>> getTable(Station station,
       [bool isArrival = true]) async {
     final now = DateTime.now();
     try {
-      final Response response = await get(Uri.parse(
-          '$baseUrl/${isArrival ? 'arrivi' : 'partenze'}/${station.id}/${days[now.weekday - 1].substring(0, 3)} ${months[now.month - 1].substring(0, 3)} ${now.day} ${now.year} ${now.hour}:${now.minute}:${now.second}'));
-      debugPrint(response.body);
-      return (jsonDecode(response.body) as List<dynamic>)
+      return (jsonDecode((await _baseRequest([
+        isArrival ? 'arrivi' : 'partenze',
+        station.id,
+        '${days[now.weekday - 1].substring(0, 3)} '
+            '${months[now.month - 1].substring(0, 3)} '
+            '${now.day} '
+            '${now.year} '
+            '${now.hour}:'
+            '${now.minute}:'
+            '${now.second}'
+      ]))
+              .body) as List<dynamic>)
           .map((e) => TrainRoute.fromJson(e))
           .toList();
     } catch (e) {
@@ -70,10 +79,12 @@ class ViaggiaTreno {
     }
   }
 
+  /// **Cerca il numero del treno per ottenere le informazioni**
+  ///
+  ///
   static Future<TrainInfo?> searchTrainNumber(String trainNumber) async {
     try {
-      final Response response =
-          await get(Uri.parse('$baseUrl/cercaNumeroTreno/$trainNumber'));
+      final response = await _baseRequest(['cercaNumeroTreno', trainNumber]);
       return TrainInfo.fromJson(jsonDecode(response.body));
     } catch (e) {
       debugPrint("searchTrainNumber: $trainNumber");
@@ -81,10 +92,18 @@ class ViaggiaTreno {
     }
   }
 
-  static Future<List<dynamic>> getTrainDetails(TrainInfo trainInfo) async {
+  static Future<List<dynamic>> getTrainDetailsFromTrainInfo(
+      TrainInfo trainInfo) async {
     try {
-      final response = await get(Uri.parse(
-          '$baseUrl/tratteCanvas/${trainInfo.codLocOrig}/${trainInfo.numeroTreno}/${trainInfo.dataPartenza}'));
+      final response = await _baseRequest([
+        'tratteCanvas',
+        trainInfo.codLocOrig,
+        trainInfo.numeroTreno,
+        trainInfo.dataPartenza
+      ]);
+      if (response.statusCode == 204) {
+        debugPrint('Treno cancellato');
+      }
       return (jsonDecode(response.body) as List<dynamic>)
           .map((e) => e)
           .toList();
@@ -93,4 +112,36 @@ class ViaggiaTreno {
       return [];
     }
   }
+
+  static Future<Statistic> getStats() async =>
+      Statistic.fromJson(jsonDecode((await _baseRequest(
+              ['statistiche', DateTime.now().millisecondsSinceEpoch]))
+          .body));
+
+  static Future<int?> getRgionByStationCode(String stationCode) async {
+    try {
+      final response = await _baseRequest(['regione', stationCode]);
+      return int.parse(response.body);
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+  static Future<Station?> getStationDetails(String stationCode) async {
+    try {
+      final region = await ViaggiaTreno.getRgionByStationCode(stationCode);
+      if (region == null) return null;
+      return Station.fromJson(jsonDecode(
+          (await _baseRequest(['dettaglioStazione', stationCode, region]))
+              .body)['localita']);
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+  static Future<Response> _baseRequest(List<dynamic> params) async =>
+      await get(Uri.parse(
+          'http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/${params.join('/')}'));
 }

@@ -7,7 +7,7 @@ class Solution {
     required this.duration,
     required this.vehicles,
   });
-  factory Solution.fronJson(Map<String, dynamic> json) {
+  factory Solution.fromJson(Map<String, dynamic> json) {
     List<int?> duration = json['durata'] == null
         ? [null, null]
         : json['durata']

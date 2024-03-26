@@ -36,6 +36,7 @@ class _SolutionsPageState extends State<SolutionsPage> {
       onRefresh: () async {
         final fetchedSolutions = await ViaggiaTreno.getSolutions(
             widget.departure, widget.destination, widget.date);
+        if (fetchedSolutions == null) return;
         setState(() => solutions = fetchedSolutions);
       },
       child: Scaffold(
@@ -66,6 +67,7 @@ class _SolutionsPageState extends State<SolutionsPage> {
                   final trainInfo =
                       await ViaggiaTreno.searchTrainNumber(vehicle.numeroTreno);
                   if (trainInfo == null) return;
+                  if (!mounted) return;
                   Navigator.push(
                       context,
                       MaterialPageRoute(
