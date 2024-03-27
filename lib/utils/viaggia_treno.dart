@@ -6,7 +6,7 @@ import 'package:binario_m/models/station.dart';
 import 'package:binario_m/models/statistic.dart';
 import 'package:binario_m/models/train_info.dart';
 import 'package:binario_m/models/train_route.dart';
-import 'package:binario_m/utils/global.dart';
+import 'package:binario_m/models/train_stop.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -28,11 +28,12 @@ class ViaggiaTreno {
   static Future<List<Solution>?> getSolutions(
       Station departure, Station destination, DateTime date) async {
     try {
+      debugPrint(DateFormat("yyyy-MM-ddTHH:mm:ss").format(date));
       return (jsonDecode((await _baseRequest([
         'soluzioniViaggioNew',
         departure.idStation,
         destination.idStation,
-        DateFormat('yyyy-MM-ddTHH:mm:ss').format(date)
+        DateFormat("yyyy-MM-ddTHH:mm:ss 'GMT'").format(date)
       ]))
               .body)['soluzioni'] as List<dynamic>)
           .map((e) => Solution.fromJson(e))
@@ -57,18 +58,12 @@ class ViaggiaTreno {
 
   static Future<List<TrainRoute>> getTable(Station station,
       [bool isArrival = true]) async {
-    final now = DateTime.now();
+    final formatter = DateFormat("EEE MMM dd yyyy HH:mm:ss");
     try {
       return (jsonDecode((await _baseRequest([
         isArrival ? 'arrivi' : 'partenze',
         station.id,
-        '${days[now.weekday - 1].substring(0, 3)} '
-            '${months[now.month - 1].substring(0, 3)} '
-            '${now.day} '
-            '${now.year} '
-            '${now.hour}:'
-            '${now.minute}:'
-            '${now.second}'
+        formatter.format(DateTime.now())
       ]))
               .body) as List<dynamic>)
           .map((e) => TrainRoute.fromJson(e))
@@ -92,7 +87,7 @@ class ViaggiaTreno {
     }
   }
 
-  static Future<List<dynamic>> getTrainDetailsFromTrainInfo(
+  static Future<List<TrainStop>> getTrainDetailsFromTrainInfo(
       TrainInfo trainInfo) async {
     try {
       final response = await _baseRequest([
@@ -105,7 +100,7 @@ class ViaggiaTreno {
         debugPrint('Treno cancellato');
       }
       return (jsonDecode(response.body) as List<dynamic>)
-          .map((e) => e)
+          .map((e) => TrainStop.fromJson(e))
           .toList();
     } catch (e) {
       debugPrint("getTrainDetails$e");

@@ -55,35 +55,39 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                         final current = snapshot.data![index];
                         return OutlinedDotIndicator(
                           color: const Color(0xff343434),
-                          backgroundColor:
-                              current['arrivoReale'] == true && widget.isToday
-                                  ? const Color(0xff6ad192)
-                                  : const Color(0xff222222),
+                          backgroundColor: current.arrivoReale && widget.isToday
+                              ? const Color(0xff6ad192)
+                              : const Color(0xff222222),
                           borderWidth: 3.0,
                         );
                       },
                       connectorBuilder: (context, index, connectorType) {
                         final current = snapshot.data![index];
-                        Color color = const Color(0xff6ad192);
-                        if (!widget.isToday ||
-                            (connectorType == ConnectorType.end &&
-                                !(current['arrivoReale'] as bool)) ||
-                            (connectorType == ConnectorType.start &&
-                                !(current['partenzaReale'] as bool))) {
-                          color = const Color(0xff343434);
+                        final next = snapshot.data![index +
+                            1]; // il metodo viene eseguito fino al penultimo quindi non è necessario effettuare controlli
+                        if (!widget.isToday) {
+                          return const DashedLineConnector(
+                              color: Color(0xff343434));
                         }
-                        return DashedLineConnector(color: color);
+                        if (current.partenzaReale &&
+                            connectorType == ConnectorType.end) {
+                          return const DashedLineConnector(
+                              color: Color(0xff6ad192));
+                        }
+                        if (next.arrivoReale &&
+                            connectorType == ConnectorType.start) {
+                          return const DashedLineConnector(
+                              color: Color(0xff6ad192));
+                        }
+                        return const DashedLineConnector(
+                            color: Color(0xff343434));
                       },
                       contentsBuilder: (context, index) {
                         final current = snapshot.data![index];
-                        final ritardoPartenza = replaceOn(
-                            current['fermata']['ritardoPartenza'] as int?,
-                            null,
-                            0);
-                        final ritardoArrivo = replaceOn(
-                            current['fermata']['ritardoArrivo'] as int?,
-                            null,
-                            0);
+                        final ritardoPartenza =
+                            replaceOn(current.fermata.ritardoPartenza, null, 0);
+                        final ritardoArrivo =
+                            replaceOn(current.fermata.ritardoArrivo, null, 0);
                         return Transform.translate(
                           offset: const Offset(0, 30),
                           child: SizedBox(
@@ -98,7 +102,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                     children: [
                                       GestureDetector(
                                           child: Text(
-                                        current['stazione'],
+                                        current.stazione,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       )),
@@ -109,9 +113,9 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              if (!(current['first'] as bool))
+                                              if (!current.first)
                                                 const Text('Arrivo'),
-                                              if (!(current['last'] as bool))
+                                              if (!current.last)
                                                 const Text('Partenza'),
                                             ],
                                           ),
@@ -120,26 +124,24 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              if (!(current['first'] as bool))
-                                                Text(formatDate(current[
-                                                                'fermata'][
-                                                            'arrivo_teorico'] ==
+                                              if (!current.first)
+                                                Text(formatDate(current.fermata
+                                                            .arrivoTeorico ==
                                                         null
                                                     ? null
                                                     : DateTime
                                                         .fromMillisecondsSinceEpoch(
-                                                            current['fermata'][
-                                                                'arrivo_teorico']))),
-                                              if (!(current['last'] as bool))
-                                                Text(formatDate(current[
-                                                                'fermata'][
-                                                            'partenza_teorica'] ==
+                                                            current.fermata
+                                                                .arrivoTeorico!))),
+                                              if (!current.last)
+                                                Text(formatDate(current.fermata
+                                                            .partenzaTeorica ==
                                                         null
                                                     ? null
                                                     : DateTime
                                                         .fromMillisecondsSinceEpoch(
-                                                            current['fermata'][
-                                                                'partenza_teorica']))),
+                                                            current.fermata
+                                                                .partenzaTeorica!))),
                                             ],
                                           ),
                                           const SizedBox(width: 10),
@@ -147,26 +149,24 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              if (!(current['first'] as bool))
-                                                Text(formatDate(current[
-                                                                'fermata']
-                                                            ['arrivoReale'] ==
+                                              if (!current.first)
+                                                Text(formatDate(current.fermata
+                                                            .arrivoReale ==
                                                         null
                                                     ? null
                                                     : DateTime
                                                         .fromMillisecondsSinceEpoch(
-                                                            current['fermata'][
-                                                                'arrivoReale']))),
-                                              if (!(current['last'] as bool))
-                                                Text(formatDate(current[
-                                                                'fermata']
-                                                            ['partenzaReale'] ==
+                                                            current.fermata
+                                                                .arrivoReale!))),
+                                              if (!current.last)
+                                                Text(formatDate(current.fermata
+                                                            .partenzaReale ==
                                                         null
                                                     ? null
                                                     : DateTime
                                                         .fromMillisecondsSinceEpoch(
-                                                            current['fermata'][
-                                                                'partenzaReale']))),
+                                                            current.fermata
+                                                                .partenzaReale!))),
                                             ],
                                           ),
                                           const SizedBox(width: 10),
@@ -174,9 +174,9 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                if (!(current['first'] as bool))
+                                                if (!current.first)
                                                   textDelay(ritardoArrivo!),
-                                                if (!(current['last'] as bool))
+                                                if (!current.last)
                                                   textDelay(ritardoPartenza!),
                                               ])
                                         ],
@@ -194,7 +194,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                                     onTap: () async {
                                                       ViaggiaTreno
                                                               .getStationDetails(
-                                                                  current['id'])
+                                                                  current.id)
                                                           .then((value) => value ==
                                                                   null
                                                               ? null
@@ -225,31 +225,31 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                                     ))
                                               ],
                                           child: Text(
-                                            current['id'],
+                                            current.id,
                                             style: const TextStyle(
                                                 color: Colors.blue,
                                                 decorationColor: Colors.blue,
                                                 decoration:
                                                     TextDecoration.underline),
                                           )),
-                                      if (!(current['first'] as bool))
+                                      if (!current.first)
                                         Text(replaceOn(
-                                            current['fermata'][
-                                                'binarioEffettivoArrivoDescrizione'],
+                                            current.fermata
+                                                .binarioEffettivoArrivoDescrizione,
                                             null,
                                             replaceOn(
-                                                current['fermata'][
-                                                    'binarioProgrammatoArrivoDescrizione'],
+                                                current.fermata
+                                                    .binarioProgrammatoArrivoDescrizione,
                                                 null,
                                                 ''))),
-                                      if (!(current['last'] as bool))
+                                      if (!current.last)
                                         Text(replaceOn(
-                                            current['fermata'][
-                                                'binarioEffettivoPartenzaDescrizione'],
+                                            current.fermata
+                                                .binarioEffettivoPartenzaDescrizione,
                                             null,
                                             replaceOn(
-                                                current['fermata'][
-                                                    'binarioProgrammatoPartenzaDescrizione'],
+                                                current.fermata
+                                                    .binarioProgrammatoPartenzaDescrizione,
                                                 null,
                                                 ''))),
                                     ],

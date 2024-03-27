@@ -18,16 +18,15 @@ class RecentlySolution {
       RecentlySolution(
           arrivalStation: json['ArrivalStation'],
           arrivalStationCode: json['ArrivalStationCode'],
-          date: json['Date'],
+          date: DateTime.parse(json['Date']),
           departureStation: json['DepartureStation'],
           departureStationCode: json['DepartureStationCode'],
           id: json['Id']);
 
   Map<String, dynamic> toJson() => {
-        'Id': id,
         'ArrivalStation': arrivalStation,
         'ArrivalStationCode': arrivalStationCode,
-        'Date': date,
+        'Date': date.toString(),
         'DepartureStation': departureStation,
         'DepartureStationCode': departureStationCode
       };

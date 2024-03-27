@@ -25,15 +25,10 @@ class LocalStorage {
 
   static Future<void> _onDatabaseEvent(Database database,
       [int? version]) async {
-    Future.any([
-      database.execute("DROP TABLE RecentlySolutions"),
-      database.execute("DROP TABLE NotificationScheduled"),
-      database.execute("DROP TABLE FavouritesRoute"),
-    ]);
     await database.execute("""
         CREATE TABLE IF NOT EXISTS RecentlySolutions(
           Id INTEGER PRIMARY KEY AUTOINCREMENT,
-          DeupartureStation VARCHAR(50),
+          DepartureStation VARCHAR(50),
           DepartureStationCode VARCHAR(10),
           ArrivalStation VARCHAR(50),
           ArrivalStationCode VARCHAR(10),
@@ -58,4 +53,12 @@ class LocalStorage {
         );
       """);
   }
+
+  static Future<List<dynamic>> getAllData(String table) async =>
+      await db.query(table);
+
+  static Future<List<RecentlySolution>> getAllRecentlySolutions() async =>
+      (await getAllData('RecentlySolutions'))
+          .map((e) => RecentlySolution.fromJson(e))
+          .toList();
 }

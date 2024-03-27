@@ -1,7 +1,9 @@
 import 'dart:math' as math;
+import 'package:binario_m/utils/local_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/recently_solution.dart';
 import '../../models/station.dart';
 import '../../utils/global.dart';
 import '../../utils/viaggia_treno.dart';
@@ -41,7 +43,7 @@ class _TrainsTabState extends State<TrainsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+    return ListView(children: [
       const SizedBox(height: 10),
       GestureDetector(
         onTap: () => Navigator.push(
@@ -116,12 +118,12 @@ class _TrainsTabState extends State<TrainsTab> {
           onPressed: () async {
             if (departure != null && destination != null) {
               selectedDate.add(Duration(hours: hour, minutes: minute));
-              /*await LocalStorage.insertRecentlySolutions(RecentlySolution(
+              await LocalStorage.insertRecentlySolutions(RecentlySolution(
                   arrivalStation: destination!.nomeBreve,
                   arrivalStationCode: destination!.id,
                   date: selectedDate,
                   departureStation: departure!.nomeBreve,
-                  departureStationCode: departure!.id));*/
+                  departureStationCode: departure!.id));
               ViaggiaTreno.getSolutions(departure!, destination!, selectedDate)
                   .then((value) async {
                 if (value == null) return;
@@ -145,6 +147,33 @@ class _TrainsTabState extends State<TrainsTab> {
         ),
       ),
       const SizedBox(height: 20),
+      FutureBuilder(
+          future: LocalStorage.getAllRecentlySolutions(),
+          builder: (_, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Loading...');
+            }
+            if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            if (snapshot.hasData) {
+              return Column(children: [
+                for (final solution in snapshot.data!)
+                  recentlySolutionCard(solution)
+              ]);
+            }
+            return const Text('No data');
+          })
     ]);
+  }
+
+  Widget recentlySolutionCard(RecentlySolution recentlySolution) {
+    return GestureDetector(
+      onTap: () => setState(() {}),
+      child: Card(
+          child: ListTile(
+              title: Text(
+                  '${recentlySolution.departureStation} -> ${recentlySolution.arrivalStation}'))),
+    );
   }
 }

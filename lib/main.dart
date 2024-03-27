@@ -1,20 +1,18 @@
 import 'package:binario_m/pages/home.dart';
+import 'package:binario_m/providers/recently_solutions.dart';
 import 'package:binario_m/providers/theme.dart';
 import 'package:binario_m/utils/local_storage.dart';
-import 'package:binario_m/utils/notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   LocalStorage.db = await LocalStorage.initDb();
-  NotificationProvider.notification.initialize(const InitializationSettings(
-    android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    iOS: DarwinInitializationSettings(),
-  ));
   runApp(MultiProvider(
-    providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
+    providers: [
+      ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ChangeNotifierProvider(create: (_) => RecentlySolutionsProvider())
+    ],
     child: const Main(),
   ));
 }

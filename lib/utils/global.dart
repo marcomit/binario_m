@@ -16,13 +16,13 @@ const List<String> months = [
 ];
 
 const List<String> days = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday'
+  'Lunedì',
+  'Martedì',
+  'Mercoledì',
+  'Giovedì',
+  'Venerdì',
+  'Sabato',
+  'Domenica'
 ];
 
 String formatNumber(int number) {
