@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:binario_m/utils/local_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,20 @@ class _TrainsTabState extends State<TrainsTab> {
               trailing: Text(destination == null ? '' : destination!.id),
               subtitle:
                   Text(destination == null ? '' : destination!.nomeLungo))),
+      SizedBox(
+        width: 50,
+        height: 50,
+        child: IconButton(
+            onPressed: () {
+              if (departure == null || destination == null) return;
+              final dep = departure;
+              setState(() {
+                departure = destination;
+                destination = dep;
+              });
+            },
+            icon: const Icon(CupertinoIcons.arrow_up_arrow_down)),
+      ),
       GestureDetector(
         onTap: () => _showDialog(
           CupertinoDatePicker(
@@ -118,12 +133,6 @@ class _TrainsTabState extends State<TrainsTab> {
           onPressed: () async {
             if (departure != null && destination != null) {
               selectedDate.add(Duration(hours: hour, minutes: minute));
-              await LocalStorage.insertRecentlySolutions(RecentlySolution(
-                  arrivalStation: destination!.nomeBreve,
-                  arrivalStationCode: destination!.id,
-                  date: selectedDate,
-                  departureStation: departure!.nomeBreve,
-                  departureStationCode: departure!.id));
               ViaggiaTreno.getSolutions(departure!, destination!, selectedDate)
                   .then((value) async {
                 if (value == null) return;
@@ -148,7 +157,7 @@ class _TrainsTabState extends State<TrainsTab> {
       ),
       const SizedBox(height: 20),
       FutureBuilder(
-          future: LocalStorage.getAllRecentlySolutions(),
+          future: LocalStorage.getRecentlySolutions(),
           builder: (_, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Loading...');
@@ -157,10 +166,11 @@ class _TrainsTabState extends State<TrainsTab> {
               return Text(snapshot.error.toString());
             }
             if (snapshot.hasData) {
-              return Column(children: [
+              return Text(
+                  '${snapshot.data!.length}'); /*return Column(children: [
                 for (final solution in snapshot.data!)
                   recentlySolutionCard(solution)
-              ]);
+              ]);*/
             }
             return const Text('No data');
           })

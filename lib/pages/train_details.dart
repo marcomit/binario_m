@@ -170,15 +170,16 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                             ],
                                           ),
                                           const SizedBox(width: 10),
-                                          Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                if (!current.first)
-                                                  textDelay(ritardoArrivo!),
-                                                if (!current.last)
-                                                  textDelay(ritardoPartenza!),
-                                              ])
+                                          if (widget.isToday)
+                                            Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  if (!current.first)
+                                                    textDelay(ritardoArrivo!),
+                                                  if (!current.last)
+                                                    textDelay(ritardoPartenza!),
+                                                ])
                                         ],
                                       ),
                                     ],
@@ -232,7 +233,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                                 decoration:
                                                     TextDecoration.underline),
                                           )),
-                                      if (!current.first)
+                                      if (!current.first && widget.isToday)
                                         Text(replaceOn(
                                             current.fermata
                                                 .binarioEffettivoArrivoDescrizione,
@@ -242,7 +243,7 @@ class _TrainDetailsPageState extends State<TrainDetailsPage> {
                                                     .binarioProgrammatoArrivoDescrizione,
                                                 null,
                                                 ''))),
-                                      if (!current.last)
+                                      if (!current.last && widget.isToday)
                                         Text(replaceOn(
                                             current.fermata
                                                 .binarioEffettivoPartenzaDescrizione,

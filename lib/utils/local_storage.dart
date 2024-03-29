@@ -1,6 +1,10 @@
 import 'dart:async';
+
+import 'package:binario_m/models/db.dart';
 import 'package:binario_m/models/recently_solution.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../models/station.dart';
 
 class LocalStorage {
   static late Database db;
@@ -10,55 +14,58 @@ class LocalStorage {
         version: 1, onCreate: _onDatabaseEvent, onOpen: _onDatabaseEvent);
   }
 
-  static Future<dynamic> getRecentlySolutions() async =>
-      await db.query("RecentlySolutions");
-
-  static Future<dynamic> getNotificationScheduled() async =>
-      await db.query('NotificationScheduled');
-
-  static Future<dynamic> getFavouritesRoutes() async =>
-      await db.query('FavouritesRoute', orderBy: 'Date DESC');
-
-  static Future<dynamic> insertRecentlySolutions(
-          RecentlySolution solution) async =>
-      await db.insert('RecentlySolutions', solution.toJson());
-
   static Future<void> _onDatabaseEvent(Database database,
       [int? version]) async {
+    await Future.any(
+        [database.delete('Stations'), database.delete('Solutions')]);
     await database.execute("""
-        CREATE TABLE IF NOT EXISTS RecentlySolutions(
-          Id INTEGER PRIMARY KEY AUTOINCREMENT,
-          DepartureStation VARCHAR(50),
-          DepartureStationCode VARCHAR(10),
-          ArrivalStation VARCHAR(50),
-          ArrivalStationCode VARCHAR(10),
-          Date VARCHAR(15)
+        CREATE TABLE IF NOT EXISTS Stations(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          shortName VARCHAR(64),
+          longName VARCHAR(64),
+          code VARCHAR(10)
         );
-      """);
+    """);
     await database.execute("""
-        CREATE TABLE IF NOT EXISTS NotificationScheduled(
-          Id INTEGER PRIMARY KEY AUTOINCREMENT,
-          Time DATETIME NOT NULL,
-          TrainNumber VARCHAR(10),
-          DepartureStation VARCHAR(10),
-          TimeDeparture VARCHAR(15)
+        CREATE TABLE IF NOT EXISTS Solutions(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          departure INTEGER,
+          destination INTEGER,
+          date DATETIME,
+          
+          FOREIGN KEY(departure) REFERENCES Stations(id),
+          FOREIGN KEY(destination) REFERENCES Stations(id)
         );
-      """);
-    await database.execute("""
-        CREATE TABLE IF NOT EXISTS FavouritesRoute(
-          Id INTEGER PRIMARY KEY AUTOINCREMENT,
-          DepartureStation VARCHAR(10),
-          ArrivalStation VARCHAR(10),
-          Date VARCHAR(15)
-        );
-      """);
+    """);
   }
 
   static Future<List<dynamic>> getAllData(String table) async =>
       await db.query(table);
 
-  static Future<List<RecentlySolution>> getAllRecentlySolutions() async =>
-      (await getAllData('RecentlySolutions'))
-          .map((e) => RecentlySolution.fromJson(e))
-          .toList();
+  static Future<List<SolutionDB>> getRecentlySolutions() async =>
+      (await db.rawQuery("""
+        SELECT sol.id, sol.departure, sol.destination, sol.date, st.code
+        FROM Solutions AS sol
+        INNER JOIN Stations AS st
+        ON st.id=sol.departure
+        INNER JOIN Stations AS st2
+        ON st2.id=sol.destination
+        ORDER BY date DESC""")).map((e) => SolutionDB.fromJson(e)).toList();
+
+  static Future<int?> insertStation(Station station) async {
+    try {
+      return await db.insert('Stations', Station.toJson(station));
+    }
+    catch(e){
+      return null;
+    }}
+
+  static Future<int?> insertSolution(SolutionDB solution) async {
+    try{
+      return await db.insert('Solutions', solution.toJson());
+    }
+    catch(e){
+      return null;
+    }
+  }
 }

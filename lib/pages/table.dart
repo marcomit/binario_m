@@ -76,8 +76,9 @@ class RouteCard extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (_) =>
-                    TrainDetailsPage(trainInfo: trainInfo, isToday: true)));
+                builder: (_) => TrainDetailsPage(
+                    trainInfo: trainInfo,
+                    isToday: isToday(DateTime.parse(trainInfo.dataPartenza)))));
       },
       child: Padding(
           padding: const EdgeInsets.all(10),
@@ -113,7 +114,7 @@ class RouteCard extends StatelessWidget {
                                   ? trainRoute.binarioProgrammatoArrivo
                                   : trainRoute.binarioProgrammatoPartenza,
                               null,
-                              'B')),
+                              ' ')),
                       style: const TextStyle(
                           color: Colors.blueAccent,
                           fontWeight: FontWeight.bold),
