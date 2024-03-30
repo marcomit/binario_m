@@ -78,7 +78,8 @@ class RouteCard extends StatelessWidget {
             MaterialPageRoute(
                 builder: (_) => TrainDetailsPage(
                     trainInfo: trainInfo,
-                    isToday: isToday(DateTime.parse(trainInfo.dataPartenza)))));
+                    isToday: isToday(DateTime.fromMillisecondsSinceEpoch(
+                        int.parse(trainInfo.dataPartenza))))));
       },
       child: Padding(
           padding: const EdgeInsets.all(10),

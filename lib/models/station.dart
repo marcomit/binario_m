@@ -1,3 +1,5 @@
+import 'package:binario_m/models/db.dart';
+
 class Station {
   final String nomeLungo;
   final String nomeBreve;
@@ -19,6 +21,13 @@ class Station {
       nomeBreve: json['nomeBreve'],
       label: json['label'],
       id: json['id']);
+
+  factory Station.fromDB(StationDB stationDB) => Station(
+      nomeLungo: stationDB.longName,
+      nomeBreve: stationDB.shortName,
+      id: stationDB.code,
+      label: null,
+      region: null);
 
   static Map<String, dynamic> toJson(Station station) => {
         'longName': station.nomeLungo,

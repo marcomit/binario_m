@@ -27,8 +27,13 @@ class SolutionDB {
 
   factory SolutionDB.fromJson(Map<String, dynamic> json) => SolutionDB(
       id: json['id'],
-      departure: json['departure'],
-      destination: json['destination'],
+      departure: StationDB(json['departureId'], json['departureShortName'],
+          json['departureLongName'], json['departureCode']),
+      destination: StationDB(
+          json['destinationId'],
+          json['destinationShortName'],
+          json['destinationLongName'],
+          json['destinationCode']),
       date: DateTime.parse(json['date']));
 
   Map<String, dynamic> toJson() => {

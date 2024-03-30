@@ -3,24 +3,18 @@ class TrainInfo {
   final String codLocOrig;
   final String descLocOrig;
   final String dataPartenza;
-  final String corsa;
-  final bool h24;
 
   const TrainInfo(
       {required this.numeroTreno,
       required this.codLocOrig,
       required this.descLocOrig,
-      required this.dataPartenza,
-      required this.corsa,
-      required this.h24});
+      required this.dataPartenza});
 
   factory TrainInfo.fromJson(Map<String, dynamic> json) {
     return TrainInfo(
         numeroTreno: json['numeroTreno'],
         codLocOrig: json['codLocOrig'],
         descLocOrig: json['descLocOrig'],
-        dataPartenza: json['dataPartenza'].toString(),
-        corsa: json['corsa'],
-        h24: json['h24'] == 'true');
+        dataPartenza: json['dataPartenza'].toString());
   }
 }

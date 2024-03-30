@@ -22,21 +22,28 @@ class RecentlySolutionsProvider with ChangeNotifier {
     Station destination,
     DateTime date,
   ) async {
-    // final destinationId = await LocalStorage.insertStation(departure);
-    // if (destinationId == null) return false;
+    for (final solution in recentlySolutions) {
+      if (solution.departure.id!.toString() == departure.id &&
+          solution.destination.id!.toString() == destination.id) {
+        return false;
+      }
+    }
 
-    // final departureId = await LocalStorage.insertStation(destination);
-    // if (departureId == null) return false;
+    final destinationId = await LocalStorage.insertStation(departure);
+    if (destinationId == null) return false;
 
-    // final SolutionDB solution = SolutionDB(
-    //     date: date,
-    //     departure: StationDB(departureId, departure.nomeBreve,
-    //         departure.nomeLungo, departure.id),
-    //     destination: StationDB(destinationId, destination.nomeBreve,
-    //         destination.nomeLungo, destination.id));
+    final departureId = await LocalStorage.insertStation(destination);
+    if (departureId == null) return false;
 
-    // final solutionId = await LocalStorage.insertSolution(solution);
-    // if (solutionId == null) return false;
+    final SolutionDB solution = SolutionDB(
+        date: date,
+        departure: StationDB(departureId, departure.nomeBreve,
+            departure.nomeLungo, departure.id),
+        destination: StationDB(destinationId, destination.nomeBreve,
+            destination.nomeLungo, destination.id));
+
+    final solutionId = await LocalStorage.insertSolution(solution);
+    if (solutionId == null) return false;
 
     recentlySolutions = await LocalStorage.getRecentlySolutions();
     notifyListeners();

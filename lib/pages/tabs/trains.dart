@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:binario_m/models/db.dart';
 import 'package:binario_m/providers/recently_solutions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -157,7 +158,41 @@ class _TrainsTabState extends State<TrainsTab> {
       ),
       const SizedBox(height: 20),
       for (final solution in solutionsProvider.recentlySolutions)
-        Text(solution.departure.code)
+        solutionCard(solution)
     ]);
+  }
+
+  Widget solutionCard(SolutionDB solution) {
+    return GestureDetector(
+      onTap: () => setState(() {
+        departure = Station.fromDB(solution.departure);
+        destination = Station.fromDB(solution.destination);
+        selectedDate = DateTime(selectedDate.year, selectedDate.month,
+            selectedDate.day, solution.date.hour, solution.date.minute);
+      }),
+      child: Card(
+        child: Column(
+          children: [
+            ListTile(
+                title: Text(formatDate(solution.date)),
+                trailing: IconButton(
+                  onPressed: () {},
+                  iconSize: 15,
+                  icon: const Icon(CupertinoIcons.delete),
+                )),
+            ListTile(
+              title: Text(solution.departure.shortName),
+              subtitle: Text(solution.departure.longName),
+              trailing: Text(solution.departure.code),
+            ),
+            ListTile(
+              title: Text(solution.destination.shortName),
+              subtitle: Text(solution.destination.longName),
+              trailing: Text(solution.destination.code),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
