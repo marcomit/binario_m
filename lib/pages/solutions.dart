@@ -10,10 +10,8 @@ class SolutionsPage extends StatefulWidget {
   final Station departure;
   final Station destination;
   final DateTime date;
-  final List<Solution> solutions;
   const SolutionsPage(
       {super.key,
-      required this.solutions,
       required this.date,
       required this.destination,
       required this.departure});
@@ -23,31 +21,41 @@ class SolutionsPage extends StatefulWidget {
 }
 
 class _SolutionsPageState extends State<SolutionsPage> {
-  List<Solution> solutions = [];
+  int refreshCount = 0;
   @override
   void initState() {
     super.initState();
-    setState(() => solutions = widget.solutions);
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async {
-        final fetchedSolutions = await ViaggiaTreno.getSolutions(
-            widget.departure, widget.destination, widget.date);
-        if (fetchedSolutions == null) return;
-        setState(() => solutions = fetchedSolutions);
-      },
+      onRefresh: () async => setState(() => refreshCount++),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Soluzioni'),
         ),
         body: Padding(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          child: ListView(children: [
-            for (final solution in widget.solutions) solutionCard(solution)
-          ]),
+          child: FutureBuilder(
+            future: ViaggiaTreno.getSolutions(
+                widget.departure, widget.destination, widget.date),
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return const Center(
+                    child: Text('Errore durante il recupero delle soluzioni!'));
+              }
+              if (snapshot.hasData) {
+                return ListView(children: [
+                  for (final solution in snapshot.data!) solutionCard(solution)
+                ]);
+              }
+              return const Center(child: Text('Non ci sono dati!'));
+            },
+          ),
         ),
       ),
     );

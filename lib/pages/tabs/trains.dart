@@ -1,13 +1,12 @@
 import 'dart:math' as math;
 
-import 'package:binario_m/utils/local_storage.dart';
+import 'package:binario_m/providers/recently_solutions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../models/recently_solution.dart';
 import '../../models/station.dart';
 import '../../utils/global.dart';
-import '../../utils/viaggia_treno.dart';
 import '../search.dart';
 import '../solutions.dart';
 
@@ -44,6 +43,7 @@ class _TrainsTabState extends State<TrainsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final solutionsProvider = context.watch<RecentlySolutionsProvider>();
     return ListView(children: [
       const SizedBox(height: 10),
       GestureDetector(
@@ -131,59 +131,33 @@ class _TrainsTabState extends State<TrainsTab> {
         height: 50,
         child: FloatingActionButton.extended(
           onPressed: () async {
-            if (departure != null && destination != null) {
-              selectedDate.add(Duration(hours: hour, minutes: minute));
-              ViaggiaTreno.getSolutions(departure!, destination!, selectedDate)
-                  .then((value) async {
-                if (value == null) return;
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => SolutionsPage(
-                            solutions: value,
-                            date: selectedDate,
-                            departure: departure!,
-                            destination: destination!)));
-              });
-            } else {
+            if (departure == null || destination == null) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   behavior: SnackBarBehavior.floating,
                   content: Text('Inserisci tutti i dati prima di cercare!')));
+              return;
             }
+
+            selectedDate.add(Duration(hours: hour, minutes: minute));
+
+            solutionsProvider.addSolution(
+                departure!, destination!, selectedDate);
+
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => SolutionsPage(
+                        date: selectedDate,
+                        departure: departure!,
+                        destination: destination!)));
           },
           icon: const Icon(CupertinoIcons.search),
           label: const Text('Cerca'),
         ),
       ),
       const SizedBox(height: 20),
-      FutureBuilder(
-          future: LocalStorage.getRecentlySolutions(),
-          builder: (_, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...');
-            }
-            if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
-            }
-            if (snapshot.hasData) {
-              return Text(
-                  '${snapshot.data!.length}'); /*return Column(children: [
-                for (final solution in snapshot.data!)
-                  recentlySolutionCard(solution)
-              ]);*/
-            }
-            return const Text('No data');
-          })
+      for (final solution in solutionsProvider.recentlySolutions)
+        Text(solution.departure.code)
     ]);
-  }
-
-  Widget recentlySolutionCard(RecentlySolution recentlySolution) {
-    return GestureDetector(
-      onTap: () => setState(() {}),
-      child: Card(
-          child: ListTile(
-              title: Text(
-                  '${recentlySolution.departureStation} -> ${recentlySolution.arrivalStation}'))),
-    );
   }
 }
