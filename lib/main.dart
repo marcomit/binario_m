@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   LocalStorage.db = await LocalStorage.initDb();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeProvider()),

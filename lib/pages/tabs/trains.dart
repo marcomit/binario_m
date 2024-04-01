@@ -1,10 +1,8 @@
 import 'dart:math' as math;
-
 import 'package:binario_m/models/db.dart';
-import 'package:binario_m/providers/recently_solutions.dart';
+import 'package:binario_m/utils/local_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../models/station.dart';
 import '../../utils/global.dart';
@@ -18,11 +16,19 @@ class TrainsTab extends StatefulWidget {
 }
 
 class _TrainsTabState extends State<TrainsTab> {
+  List<SolutionDB> recentlySolutions = [];
   Station? departure;
   Station? destination;
   DateTime selectedDate = DateTime.now();
   int hour = 0;
   int minute = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    LocalStorage.getRecentlySolutions()
+        .then((value) => setState(() => recentlySolutions = value));
+  }
 
   void _showDialog(Widget child) {
     showCupertinoModalPopup<void>(
@@ -44,7 +50,6 @@ class _TrainsTabState extends State<TrainsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final solutionsProvider = context.watch<RecentlySolutionsProvider>();
     return ListView(children: [
       const SizedBox(height: 10),
       GestureDetector(
@@ -141,8 +146,7 @@ class _TrainsTabState extends State<TrainsTab> {
 
             selectedDate.add(Duration(hours: hour, minutes: minute));
 
-            solutionsProvider.addSolution(
-                departure!, destination!, selectedDate);
+            // Aggionge la soluzione al DB
 
             Navigator.push(
                 context,
@@ -157,42 +161,65 @@ class _TrainsTabState extends State<TrainsTab> {
         ),
       ),
       const SizedBox(height: 20),
-      for (final solution in solutionsProvider.recentlySolutions)
-        solutionCard(solution)
+      for (final solution in recentlySolutions)
+        GestureDetector(
+          onTap: () => setState(() {
+            departure = Station.fromDB(solution.departure);
+            destination = Station.fromDB(solution.destination);
+            selectedDate = DateTime(selectedDate.year, selectedDate.month,
+                selectedDate.day, solution.date.hour, solution.date.minute);
+          }),
+          child: Card(
+            child: Column(
+              children: [
+                ListTile(
+                    title: Text(formatDate(solution.date)),
+                    trailing: IconButton(
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Elimina soluzione',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          content: Text(
+                              'Sei certo di voler eliminare la soluzione ${solution.departure.shortName} - ${solution.destination.shortName} per il ${formatDate(solution.date)}?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () async {
+                                await LocalStorage.deleteSolution(solution.id!);
+                                setState(() {
+                                  recentlySolutions.removeWhere(
+                                      (element) => element.id == solution.id);
+                                });
+                                if (context.mounted) {
+                                  Navigator.pop(context, true);
+                                }
+                              },
+                              child: const Text('Elimina'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Annulla'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      iconSize: 15,
+                      icon: const Icon(CupertinoIcons.delete),
+                    )),
+                ListTile(
+                  title: Text(solution.departure.shortName),
+                  subtitle: Text(solution.departure.longName),
+                  trailing: Text(solution.departure.code),
+                ),
+                ListTile(
+                  title: Text(solution.destination.shortName),
+                  subtitle: Text(solution.destination.longName),
+                  trailing: Text(solution.destination.code),
+                ),
+              ],
+            ),
+          ),
+        )
     ]);
-  }
-
-  Widget solutionCard(SolutionDB solution) {
-    return GestureDetector(
-      onTap: () => setState(() {
-        departure = Station.fromDB(solution.departure);
-        destination = Station.fromDB(solution.destination);
-        selectedDate = DateTime(selectedDate.year, selectedDate.month,
-            selectedDate.day, solution.date.hour, solution.date.minute);
-      }),
-      child: Card(
-        child: Column(
-          children: [
-            ListTile(
-                title: Text(formatDate(solution.date)),
-                trailing: IconButton(
-                  onPressed: () {},
-                  iconSize: 15,
-                  icon: const Icon(CupertinoIcons.delete),
-                )),
-            ListTile(
-              title: Text(solution.departure.shortName),
-              subtitle: Text(solution.departure.longName),
-              trailing: Text(solution.departure.code),
-            ),
-            ListTile(
-              title: Text(solution.destination.shortName),
-              subtitle: Text(solution.destination.longName),
-              trailing: Text(solution.destination.code),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

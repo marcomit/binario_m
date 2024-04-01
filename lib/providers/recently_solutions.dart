@@ -29,10 +29,10 @@ class RecentlySolutionsProvider with ChangeNotifier {
       }
     }
 
-    final destinationId = await LocalStorage.insertStation(departure);
+    final destinationId = await LocalStorage.insertStation(destination);
     if (destinationId == null) return false;
 
-    final departureId = await LocalStorage.insertStation(destination);
+    final departureId = await LocalStorage.insertStation(departure);
     if (departureId == null) return false;
 
     final SolutionDB solution = SolutionDB(
