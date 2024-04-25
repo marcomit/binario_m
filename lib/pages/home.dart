@@ -1,12 +1,13 @@
-import 'package:binario_m/pages/tabs/favourites.dart';
+import 'package:binario_m/pages/tabs/color_picker.dart';
 import 'package:binario_m/pages/tabs/news.dart';
 import 'package:binario_m/pages/tabs/station.dart';
 import 'package:binario_m/pages/tabs/trains.dart';
 import 'package:binario_m/providers/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:provider/provider.dart';
+
+import '../components/components.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,8 +21,9 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> tabs = [
     const TrainsTab(),
     const StationTab(),
-    const FavouritesTab(),
-    const NewsTab()
+    //const FavouritesTab(),
+    const NewsTab(),
+    const ColorPickerTab()
   ];
   @override
   Widget build(BuildContext context) {
@@ -44,40 +46,16 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
         child: tabs[_selectedIndex],
       )),
-      bottomNavigationBar: GNav(
-        gap: 8,
-        iconSize: 24,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        duration: const Duration(milliseconds: 400),
-        tabs: [
-          const GButton(
-            icon: CupertinoIcons.train_style_two,
-            text: 'Tratta',
-          ),
-          const GButton(
-            icon: CupertinoIcons.alt,
-            text: 'Tabellone',
-          ),
-          GButton(
-            icon: _selectedIndex == 2
-                ? CupertinoIcons.star_fill
-                : CupertinoIcons.star,
-            text: 'Preferiti',
-          ),
-          GButton(
-            icon: _selectedIndex == 3
-                ? CupertinoIcons.news_solid
-                : CupertinoIcons.news,
-            text: 'Notizie',
-          ),
-        ],
-        selectedIndex: _selectedIndex,
-        onTabChange: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
+      bottomNavigationBar: NeuBottomNav(
+          icons: const [
+            CupertinoIcons.home,
+            CupertinoIcons.alt,
+            CupertinoIcons.news,
+            CupertinoIcons.color_filter
+          ],
+          onIconTap: (index) => setState(() => _selectedIndex = index),
+          autoHideOnScroll: false,
+          scrollController: ScrollController()),
     );
   }
 }

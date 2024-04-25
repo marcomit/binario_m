@@ -1,3 +1,4 @@
+import 'package:binario_m/components/components.dart';
 import 'package:binario_m/models/station.dart';
 import 'package:binario_m/utils/viaggia_treno.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,10 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: TextField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    hintText: 'Cerca stazione...'),
+              child: NeuSearchBar(
+                hintText: "Cerca una stazione",
+                // searchBarColor: Colors.white,
+                leadingIcon: const Icon(null),
                 onChanged: (value) async {
                   if (value.length < 2) return;
                   setState(() {
@@ -66,11 +66,16 @@ class _SearchPageState extends State<SearchPage> {
   Widget stationCard({required Station station}) {
     return GestureDetector(
       onTap: () => Navigator.pop<Station>(context, station),
-      child: Card(
-        child: ListTile(
-          title: Text(station.nomeBreve),
-          subtitle: Text(station.nomeLungo),
-          trailing: Text(station.id),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: NeuContainer(
+          borderRadius: BorderRadius.circular(10),
+          // color: Theme.of(context).scaffoldBackgroundColor,
+          child: ListTile(
+            title: Text(station.nomeBreve),
+            subtitle: Text(station.nomeLungo),
+            trailing: Text(station.id),
+          ),
         ),
       ),
     );

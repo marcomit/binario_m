@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 
 class ThemeProvider with ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.dark;
+  ThemeMode _themeMode = ThemeMode.light;
   ThemeMode get themeMode => _themeMode;
+  Color _currentSeedColor = Colors.amber;
+  Color get currentSeedColor => _currentSeedColor;
+  set currentSeedColor(Color newValue) {
+    _currentSeedColor = newValue;
+    notifyListeners();
+  }
+
   set isDarkTheme(ThemeMode newValue) {
     _themeMode = newValue;
     notifyListeners();
   }
 
   void toggle() {
-    switch (themeMode.index) {
-      case 0: // System
-        _themeMode = ThemeMode.light;
-        break;
-      case 1: // Light
-        _themeMode = ThemeMode.dark;
-        break;
-      case 2: // Dark
-        _themeMode = ThemeMode.system;
-        break;
+    debugPrint(themeMode.toString());
+    if (themeMode == ThemeMode.dark) {
+      _themeMode = ThemeMode.light;
+    } else {
+      _themeMode = ThemeMode.dark;
     }
+    notifyListeners();
+  }
+
+  void changeSeedColor(Color color) {
+    _currentSeedColor = color;
     notifyListeners();
   }
 }

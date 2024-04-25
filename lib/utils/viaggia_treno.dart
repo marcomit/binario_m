@@ -33,7 +33,7 @@ class ViaggiaTreno {
         'soluzioniViaggioNew',
         departure.idStation,
         destination.idStation,
-        DateFormat("yyyy-MM-ddTHH:mm:ss 'GMT'").format(date)
+        DateFormat("yyyy-MM-ddTHH:mm:ss").format(date)
       ]))
               .body)['soluzioni'] as List<dynamic>)
           .map((e) => Solution.fromJson(e))
@@ -136,7 +136,10 @@ class ViaggiaTreno {
     }
   }
 
-  static Future<Response> _baseRequest(List<dynamic> params) async =>
-      await get(Uri.parse(
-          'http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/${params.join('/')}'));
+  static Future<Response> _baseRequest(List<dynamic> params) async {
+    debugPrint(
+        'http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/${params.join('/')}');
+    return await get(Uri.parse(
+        'http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/${params.join('/')}'));
+  }
 }

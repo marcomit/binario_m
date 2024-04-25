@@ -8,9 +8,9 @@ import '../models/station.dart';
 const String schemas = """
 CREATE TABLE IF NOT EXISTS Stations(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  shortName VARCHAR(64),
-  longName VARCHAR(64),
-  code VARCHAR(10)
+  shortName VARCHAR(64) UNIQUE,
+  longName VARCHAR(64) UNIQUE,
+  code VARCHAR(10) UNIQUE
 );
 CREATE TABLE IF NOT EXISTS Solutions(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,16 +23,6 @@ CREATE TABLE IF NOT EXISTS Solutions(
   
   UNIQUE(departure, destination)
 );
-CREATE TABLE IF NOT EXISTS Trains(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  departure INTEGER NOT NULL,
-  destination INTEGER NOT NULL,
-  trainCode VARCHAR(10) NOT NULL,
-  date DATETIME,
-  
-  FOREIGN KEY(departure) REFERENCES Stations(id),
-  FOREIGN KEY(destination) REFERENCES Stations(id),
-)
 """;
 
 class LocalStorage {
@@ -45,8 +35,8 @@ class LocalStorage {
 
   static Future<void> _onDatabaseEvent(Database database,
       [int? version]) async {
-    // await database.execute('DROP TABLE Stations');
-    // await database.delete('DROP TABLE Solutions');
+    //await database.execute('DROP TABLE Stations');
+    //await database.execute('DROP TABLE Solutions');
     await Future.any(
         schemas.split(';').map((table) => database.execute(table)));
   }
@@ -77,14 +67,25 @@ class LocalStorage {
     }
   }
 
-  static Future<int?> insertSolution(SolutionDB solution) async {
+  static Future<int?> insertSolution(
+      int departureId, int destinationId, DateTime date) async {
     try {
-      return await db.insert('Solutions', solution.toJson(),
+      return await db.insert(
+          'Solutions',
+          {
+            'departure': departureId,
+            'destination': destinationId,
+            'date': date.toIso8601String()
+          },
           conflictAlgorithm: ConflictAlgorithm.fail);
     } catch (e) {
       return null;
     }
   }
+
+  static Future<int> getStationByCode(Station station) async =>
+      (await db.query('Stations', where: 'code = ?', whereArgs: [station.id]))
+          .first['id'] as int;
 
   static Future<void> deleteStation(int stationId) async =>
       await db.delete('Stations', where: 'id = ?', whereArgs: [stationId]);

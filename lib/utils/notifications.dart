@@ -77,5 +77,4 @@ class ActiveNotification {
   ///
   /// Returned only on Android.
   final String? tag;
-}
-*/
+}*/

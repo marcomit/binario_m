@@ -9,7 +9,7 @@ class Solution {
   });
   factory Solution.fromJson(Map<String, dynamic> json) {
     List<int?> duration = json['durata'] == null
-        ? [null, null]
+        ? [0, 0]
         : json['durata']
             .toString()
             .split(':')
