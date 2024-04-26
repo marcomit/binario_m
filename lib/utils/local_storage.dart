@@ -83,9 +83,9 @@ class LocalStorage {
     }
   }
 
-  static Future<int> getStationByCode(Station station) async =>
+  static Future<int?> getStationByCode(Station station) async =>
       (await db.query('Stations', where: 'code = ?', whereArgs: [station.id]))
-          .first['id'] as int;
+          .first['id'] as int?;
 
   static Future<void> deleteStation(int stationId) async =>
       await db.delete('Stations', where: 'id = ?', whereArgs: [stationId]);

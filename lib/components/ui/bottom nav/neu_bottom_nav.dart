@@ -103,7 +103,7 @@ class _NeuBottomNavState extends State<NeuBottomNav> {
                               borderRadius: BorderRadius.circular(15),
                               color: _currentIndex == i
                                   ? widget.isSelectedColor ??
-                                      Theme.of(context).primaryColorDark
+                                      Theme.of(context).primaryColorLight
                                   : Colors.transparent),
                           duration: const Duration(milliseconds: 200),
                           curve: Curves.easeInOut,

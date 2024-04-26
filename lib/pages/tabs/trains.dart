@@ -147,7 +147,7 @@ class _TrainsTabState extends State<TrainsTab> {
         padding: const EdgeInsets.all(10),
         height: 70,
         child: NeuButton(
-          buttonColor: Theme.of(context).primaryColorDark,
+          buttonColor: Theme.of(context).primaryColor,
           onPressed: () async {
             if (departure == null || destination == null) {
               const NeuToast()
@@ -158,13 +158,14 @@ class _TrainsTabState extends State<TrainsTab> {
             selectedDate.add(Duration(hours: hour, minutes: minute));
 
             // Aggionge la soluzione al DB
-            var departureId = await LocalStorage.insertStation(departure!);
-            var destinationId = await LocalStorage.insertStation(destination!);
-            departureId ??= await LocalStorage.getStationByCode(departure!);
-            destinationId ??= await LocalStorage.getStationByCode(destination!);
+            var departureId = await LocalStorage.getStationByCode(departure!);
+            var destinationId =
+                await LocalStorage.getStationByCode(destination!);
+            departureId ??= await LocalStorage.insertStation(departure!);
+            destinationId ??= await LocalStorage.insertStation(destination!);
 
             await LocalStorage.insertSolution(
-                departureId, destinationId, selectedDate);
+                departureId!, destinationId!, selectedDate);
 
             if (!context.mounted) return;
 
@@ -210,6 +211,10 @@ class _TrainsTabState extends State<TrainsTab> {
                 );
               }
               final recentlySolutions = snapshot.data!;
+              for (var element in recentlySolutions) {
+                debugPrint(
+                    '${element.departure.id} - ${element.destination.id}');
+              }
               return Column(
                   children: recentlySolutions
                       .map((solution) => Padding(

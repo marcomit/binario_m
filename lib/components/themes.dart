@@ -1,11 +1,14 @@
-import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:binario_m/utils/global.dart';
 import 'package:flutter/material.dart';
 
 ThemeData LightTheme(Color colorSeed) {
   return ThemeData(
     brightness: Brightness.light,
     useMaterial3: true,
-    primarySwatch: ColorTools.createPrimarySwatch(colorSeed),
+    primaryColor: colorSeed,
+    primaryColorDark: increaseColorFromPercentage(colorSeed, -.2),
+    primaryColorLight: increaseColorFromPercentage(colorSeed, 0.5),
+    // primarySwatch: ColorTools.createPrimarySwatch(colorSeed),
     // colorSchemeSeed: ColorTools.createPrimarySwatch(colorSeed),
     listTileTheme: const ListTileThemeData(
         iconColor: Colors.black,
@@ -22,7 +25,10 @@ ThemeData DarkTheme(Color colorSeed) {
   return ThemeData(
     brightness: Brightness.dark,
     useMaterial3: true,
-    colorSchemeSeed: ColorTools.createPrimarySwatch(colorSeed),
+    primaryColor: colorSeed,
+    primaryColorDark: increaseColorFromPercentage(colorSeed, .5),
+    primaryColorLight: increaseColorFromPercentage(colorSeed, -.5),
+    //colorSchemeSeed: ColorTools.createPrimarySwatch(colorSeed),
     inputDecorationTheme: InputDecorationTheme(
       hintStyle: TextStyle(color: Colors.grey[600]),
       labelStyle: const TextStyle(color: Colors.black),

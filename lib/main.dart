@@ -1,9 +1,10 @@
-import 'package:binario_m/components/themes.dart';
 import 'package:binario_m/pages/home.dart';
 import 'package:binario_m/providers/theme.dart';
 import 'package:binario_m/utils/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'components/themes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
